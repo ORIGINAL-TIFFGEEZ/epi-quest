@@ -1,0 +1,845 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>EPI QUEST — Public Health Training Arcade</title><meta name="theme-color" content="#120428">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦠</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Bungee+Shade&family=Lexend:wght@400;600;800&display=swap" rel="stylesheet">
+<style>:root{--bg:#120428;--bg2:#1d0b3d;--ink:#fff;--muted:#c9b8ff;--pink:#ff2e88;--cyan:#00e5ff;--lime:#b6ff00;--orange:#ff8a00;--yellow:#ffe600;--violet:#7c4dff;--red:#ff3b3b;--mint:#00ffa3;--card:#24104a;--line:#000;}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink);font-family:'Lexend',system-ui,sans-serif;font-size:17px;line-height:1.45;min-height:100%}
+body{overflow-x:hidden}
+h1,h2,h3,.disp{font-family:'Bungee',Impact,sans-serif;font-weight:400;letter-spacing:.5px}
+a{color:var(--cyan)}
+button{font-family:inherit;cursor:pointer}
+#bgfx{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.bug{position:absolute;opacity:.16;animation:float linear infinite}
+@keyframes float{0%{transform:translateY(110vh) rotate(0)}100%{transform:translateY(-20vh) rotate(360deg)}}
+#app{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:12px 14px 110px}
+header.top{display:flex;align-items:center;gap:12px;padding:10px 0 14px;flex-wrap:wrap}
+.logo{font-family:'Bungee Shade','Bungee',sans-serif;font-size:30px;line-height:1;background:linear-gradient(90deg,var(--pink),var(--yellow),var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent;cursor:pointer;animation:hue 8s linear infinite}
+@keyframes hue{50%{filter:hue-rotate(90deg)}}
+.xpbox{flex:1;min-width:200px;display:flex;align-items:center;gap:10px}
+.lvl{background:var(--yellow);color:#000;font-family:'Bungee';border:3px solid #000;border-radius:12px;padding:2px 10px;box-shadow:3px 3px 0 #000;white-space:nowrap}
+.xpbar{flex:1;height:18px;border:3px solid #000;border-radius:20px;background:#0b021c;overflow:hidden;box-shadow:3px 3px 0 #000}
+.xpfill{height:100%;background:repeating-linear-gradient(45deg,var(--lime),var(--lime) 10px,var(--mint) 10px,var(--mint) 20px);background-size:28px 28px;animation:stripes 1s linear infinite;transition:width .6s cubic-bezier(.3,1.6,.5,1)}
+@keyframes stripes{to{background-position:28px 0}}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--bg2);border:3px solid #000;border-radius:14px;padding:4px 10px;box-shadow:3px 3px 0 #000;font-weight:700;white-space:nowrap}
+.iconbtn{background:var(--violet);color:#fff;border:3px solid #000;border-radius:14px;padding:5px 10px;box-shadow:3px 3px 0 #000;font-size:18px}
+.iconbtn:active,.btn:active{transform:translate(3px,3px);box-shadow:0 0 0 #000}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;justify-content:center;gap:4px;background:#0b021c;border-top:4px solid #000;padding:8px 6px calc(8px + env(safe-area-inset-bottom));overflow-x:auto}
+nav.tabs button{background:none;border:none;color:var(--muted);display:flex;flex-direction:column;align-items:center;font-size:12px;font-weight:700;padding:4px 10px;border-radius:12px;min-width:62px}
+nav.tabs button span{font-size:24px;transition:transform .2s}
+nav.tabs button.on{background:var(--pink);color:#fff;box-shadow:inset 0 0 0 3px #000}
+nav.tabs button.on span{transform:scale(1.2) rotate(-8deg)}
+.page{animation:pop .35s cubic-bezier(.3,1.5,.5,1)}
+@keyframes pop{from{opacity:0;transform:translateY(16px) scale(.98)}}
+.h1{font-size:clamp(28px,6vw,46px);line-height:1.05;margin:6px 0 4px}
+.sub{color:var(--muted);margin-bottom:16px}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+.card{background:var(--card);border:4px solid #000;border-radius:20px;padding:16px;box-shadow:6px 6px 0 #000;position:relative}
+.card.click{cursor:pointer;transition:transform .15s}
+.card.click:hover{transform:translate(-2px,-3px) rotate(-.6deg);box-shadow:9px 9px 0 #000}
+.card h3{font-size:20px;margin-bottom:6px}
+.tag{display:inline-block;font-size:12px;font-weight:800;color:#000;background:var(--cyan);border:2px solid #000;border-radius:999px;padding:1px 8px;margin:2px 4px 2px 0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:4px solid #000;border-radius:16px;padding:10px 18px;font-weight:800;font-size:17px;box-shadow:4px 4px 0 #000;background:var(--yellow);color:#000;transition:transform .1s}
+.btn:hover{transform:translate(-1px,-2px)}
+.btn.pink{background:var(--pink);color:#fff}.btn.cyan{background:var(--cyan)}.btn.lime{background:var(--lime)}.btn.violet{background:var(--violet);color:#fff}.btn.ghost{background:var(--bg2);color:#fff}
+.btn.sm{padding:6px 12px;font-size:14px;border-width:3px;box-shadow:3px 3px 0 #000}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.hero{background:linear-gradient(135deg,var(--pink),var(--violet));border:4px solid #000;border-radius:26px;box-shadow:8px 8px 0 #000;padding:22px;margin-bottom:20px;position:relative;overflow:hidden}
+.hero .big{font-family:'Bungee';font-size:clamp(26px,5vw,40px);line-height:1.05}
+.hero .bigemoji{position:absolute;right:10px;top:-6px;font-size:110px;opacity:.35;animation:wob 4s ease-in-out infinite}
+@keyframes wob{50%{transform:rotate(14deg) scale(1.08)}}
+.quest{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:2px dashed #ffffff22}
+.quest .ck{width:28px;height:28px;border:3px solid #000;border-radius:8px;background:#0b021c;display:grid;place-items:center;font-weight:900}
+.quest.done .ck{background:var(--lime);color:#000}
+.quest.done .qt{text-decoration:line-through;opacity:.6}
+.mini{font-size:13px;color:var(--muted)}
+.sec{font-size:24px;margin:24px 0 12px;display:flex;align-items:center;gap:10px}
+.sec::after{content:"";flex:1;height:4px;background:repeating-linear-gradient(90deg,var(--pink) 0 14px,transparent 14px 22px)}
+.list li{margin:4px 0 4px 20px}
+.statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{background:#0b021c;border:3px solid #000;border-radius:16px;padding:10px;text-align:center}
+.stat .n{font-family:'Bungee';font-size:28px}
+.trend{font-weight:800;font-size:13px}
+.newsitem{display:block;padding:10px 12px;margin:8px 0;background:#0b021c;border:3px solid #000;border-radius:14px;text-decoration:none;color:#fff;transition:transform .15s}
+.newsitem:hover{transform:translateX(6px);border-color:var(--cyan)}
+.newsitem.hot{border-color:var(--red);box-shadow:0 0 0 2px var(--red),0 0 18px #ff3b3b66}
+.newsitem .d{font-size:12px;color:var(--muted)}
+.seg{display:inline-flex;border:3px solid #000;border-radius:14px;overflow:hidden;box-shadow:3px 3px 0 #000;flex-wrap:wrap}
+.seg button{border:none;background:var(--bg2);color:#fff;padding:7px 12px;font-weight:800}
+.seg button.on{background:var(--cyan);color:#000}
+/* modal / game */
+#modal{position:fixed;inset:0;z-index:50;background:#08011acc;backdrop-filter:blur(4px);display:none;align-items:flex-start;justify-content:center;overflow:auto;padding:16px}
+#modal.on{display:flex}
+#modal .box{width:100%;max-width:780px;background:var(--bg2);border:5px solid #000;border-radius:26px;box-shadow:10px 10px 0 #000;padding:20px;margin:auto;animation:pop .3s cubic-bezier(.3,1.6,.5,1);position:relative}
+.close{position:absolute;right:12px;top:12px;background:var(--red);color:#fff;border:3px solid #000;border-radius:12px;width:40px;height:40px;font-size:20px;font-weight:900;box-shadow:3px 3px 0 #000;z-index:2}
+.gamehead{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:0 46px 14px 0}
+.qcard{background:#fff;color:#14062d;border:4px solid #000;border-radius:20px;padding:20px;font-size:20px;font-weight:600;box-shadow:6px 6px 0 #000;margin-bottom:16px;min-height:90px;animation:pop .3s}
+.opts{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.opt{border:4px solid #000;border-radius:16px;padding:14px;font-weight:800;font-size:16px;background:var(--cyan);color:#000;box-shadow:4px 4px 0 #000;transition:transform .1s}
+.opt:nth-child(5n+2){background:var(--yellow)}.opt:nth-child(5n+3){background:var(--lime)}.opt:nth-child(5n+4){background:var(--orange)}.opt:nth-child(5n+5){background:#ff9bd2}
+.opt:hover{transform:translateY(-3px) rotate(-1deg)}
+.opt.right{background:var(--mint)!important;animation:bounce .4s}
+.opt.wrong{background:var(--red)!important;color:#fff;animation:shake .4s}
+.opt:disabled{cursor:default}
+@keyframes bounce{40%{transform:scale(1.08)}}
+@keyframes shake{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+.fb{margin-top:14px;padding:12px 14px;border:3px solid #000;border-radius:14px;background:#0b021c;animation:pop .3s}
+.timer{height:14px;border:3px solid #000;border-radius:10px;background:#0b021c;overflow:hidden;flex:1;min-width:120px}
+.timer div{height:100%;background:linear-gradient(90deg,var(--red),var(--yellow),var(--lime));transition:width 1s linear}
+.combo{font-family:'Bungee';color:var(--yellow);animation:wob 1s infinite}
+.score{font-family:'Bungee';font-size:22px}
+input,select,textarea{font-family:inherit;font-size:16px;border:3px solid #000;border-radius:12px;padding:8px 10px;background:#fff;color:#000}
+.calc label{display:block;font-size:13px;font-weight:700;margin-top:8px;color:var(--muted)}
+.calc input{width:100%}
+.result{font-family:'Bungee';font-size:26px;color:var(--lime);margin-top:10px}
+.formula{font-family:'Courier New',monospace;font-weight:800;background:#000;color:var(--yellow);padding:6px 10px;border-radius:10px;display:inline-block;margin:4px 0}
+.flip{perspective:900px;cursor:pointer;height:120px}
+.flip .in{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.flip.on .in{transform:rotateY(180deg)}
+.flip .f,.flip .b{position:absolute;inset:0;backface-visibility:hidden;border:4px solid #000;border-radius:16px;display:grid;place-items:center;text-align:center;padding:8px;font-weight:800;box-shadow:4px 4px 0 #000}
+.flip .f{background:var(--violet);font-size:30px}
+.flip .b{background:#fff;color:#000;transform:rotateY(180deg);font-size:14px}
+.flip.gone .b{background:var(--lime)}
+.memgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:560px){.memgrid{grid-template-columns:repeat(3,1fr)}.flip{height:110px}.flip .b{font-size:12px}.statgrid{grid-template-columns:1fr 1fr 1fr}.logo{font-size:24px}nav.tabs{justify-content:space-between;gap:0}nav.tabs button{min-width:0;flex:1;padding:4px 2px;font-size:10px}nav.tabs button span{font-size:20px}}
+canvas{max-width:100%;display:block}
+.simwrap{background:#0b021c;border:4px solid #000;border-radius:18px;overflow:hidden}
+.legend span{display:inline-flex;align-items:center;gap:5px;margin-right:12px;font-size:13px;font-weight:700}
+.legend i{width:12px;height:12px;border-radius:50%;display:inline-block;border:2px solid #000}
+.epibars{display:flex;align-items:flex-end;gap:3px;height:160px;padding:8px;background:#0b021c;border:3px solid #000;border-radius:14px}
+.epibars div{flex:1;background:var(--pink);border:2px solid #000;border-bottom:none;border-radius:4px 4px 0 0;transform-origin:bottom;animation:grow .7s cubic-bezier(.3,1.5,.5,1) both}
+@keyframes grow{from{transform:scaleY(0)}}
+table.t{border-collapse:collapse;width:100%;background:#fff;color:#000;border:3px solid #000;border-radius:12px;overflow:hidden;font-size:15px}
+table.t th,table.t td{border:2px solid #000;padding:6px 8px;text-align:center}
+table.t th{background:var(--yellow)}
+table.t tr.pick{background:#d9ffe9}
+.wheelwrap{position:relative;width:min(340px,86vw);margin:10px auto}
+.wheelwrap .pin{position:absolute;left:50%;top:-14px;transform:translateX(-50%);font-size:36px;z-index:2;filter:drop-shadow(2px 2px 0 #000)}
+#wheel{transition:transform 4s cubic-bezier(.15,.9,.2,1);border-radius:50%;border:5px solid #000;box-shadow:6px 6px 0 #000}
+.toast{position:fixed;left:50%;top:16px;transform:translateX(-50%);z-index:90;background:var(--yellow);color:#000;font-weight:900;border:4px solid #000;border-radius:16px;padding:10px 18px;box-shadow:5px 5px 0 #000;animation:toast 2.6s forwards;pointer-events:none;text-align:center}
+@keyframes toast{0%{opacity:0;transform:translate(-50%,-30px) scale(.8)}12%{opacity:1;transform:translate(-50%,0) scale(1.05)}85%{opacity:1}100%{opacity:0;transform:translate(-50%,-20px)}}
+.xpfloat{position:fixed;z-index:95;font-family:'Bungee';color:var(--lime);font-size:26px;pointer-events:none;text-shadow:3px 3px 0 #000;animation:up 1.1s forwards}
+@keyframes up{to{transform:translateY(-70px);opacity:0}}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:99}
+.badge{text-align:center;padding:10px;border:3px solid #000;border-radius:16px;background:#0b021c}
+.badge.off{filter:grayscale(1);opacity:.35}
+.badge .e{font-size:36px}
+.dz{font-size:44px;line-height:1}
+.pill{display:inline-block;padding:2px 10px;border-radius:999px;border:2px solid #000;font-weight:800;font-size:13px}
+.status-Interested{background:var(--cyan);color:#000}.status-Studying{background:var(--yellow);color:#000}.status-Applied{background:var(--orange);color:#000}.status-Done{background:var(--lime);color:#000}.status-None{background:#444;color:#fff}
+.focusring{font-family:'Bungee';font-size:13px}
+.meter{height:22px;border:3px solid #000;border-radius:12px;background:#0b021c;overflow:hidden}
+.meter div{height:100%;background:linear-gradient(90deg,var(--red),var(--yellow),var(--lime));transition:width .6s}
+.boredbtn{position:fixed;right:16px;bottom:96px;z-index:30;background:var(--orange);color:#000;font-family:'Bungee';border:4px solid #000;border-radius:999px;padding:12px 16px;box-shadow:5px 5px 0 #000;animation:wob 3s ease-in-out infinite}
+.boredbtn:hover{animation-play-state:paused}
+details{background:#0b021c;border:3px solid #000;border-radius:14px;padding:10px 12px;margin:8px 0}
+summary{font-weight:800;cursor:pointer}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
+<div id="bgfx"></div><canvas id="confetti"></canvas>
+<div id="app"><header class="top" id="hdr"></header><main id="main"></main></div>
+<button class="boredbtn" onclick="startGame(pick(GAMES).id)" title="Jump to a random game">😩 I'm bored</button>
+<nav class="tabs" id="nav"></nav>
+<div id="modal"><div class="box" id="mbox"></div></div>
+<script>/* ===================== CONTENT ===================== */
+const DISEASES = [
+ {id:"asthma", name:"Asthma", emoji:"🫁", color:"#00e5ff", type:"Chronic respiratory",
+  oneLiner:"Chronic airway inflammation that makes breathing tubes swell, tighten and fill with mucus.",
+  facts:["About 1 in 12 people in the U.S. has asthma, including millions of kids.","Leading chronic disease of childhood and a top reason kids miss school.","Black children are far more likely to visit the ER, be hospitalized, or die from asthma than white children — a housing, pollution and access story, not a biology story.","Big-city neighborhoods with older housing, pests, mold and traffic pollution (hello, Philly) carry the heaviest burden."],
+  triggers:["Tobacco & vape smoke","Mold & dampness","Cockroach & mouse allergens","Dust mites","Outdoor air pollution & wildfire smoke","Colds, flu, RSV & COVID","Cold air, exercise, strong smells"],
+  prevent:["Asthma Action Plan for every patient (green/yellow/red zones)","Daily controller meds (inhaled corticosteroids) when prescribed","Community health worker home visits + trigger removal (integrated pest management, mattress covers)","School-based asthma programs & stock inhalers","Smoke-free housing policy","Flu & COVID vaccines to prevent attacks"],
+  numbers:[["Key measures","Prevalence, ED visit rate, hospitalization rate, missed school days"],["Equity lens","Compare rates by ZIP code, race, insurance"],["Link to preterm birth","Babies born early have a higher risk of childhood asthma"]],
+  watch:"Spikes during back-to-school (the September asthma peak) and respiratory virus season.",
+  links:[["CDC Asthma","https://www.cdc.gov/asthma/"],["EPA Asthma & Indoor Air","https://www.epa.gov/asthma"]]},
+ {id:"preterm", name:"Preterm Birth", emoji:"👶", color:"#ff2e88", type:"Maternal & infant health",
+  oneLiner:"A baby born before 37 completed weeks of pregnancy.",
+  facts:["About 1 in 10 U.S. babies is born preterm.","Black mothers have preterm birth rates roughly 50% higher than white mothers — racism-related stress (the 'weathering' hypothesis), care access and chronic conditions all play a role.","Preterm birth and low birth weight are among the leading causes of infant death.","Categories: extremely preterm (<28 wks), very preterm (28–<32), moderate to late preterm (32–<37)."],
+  triggers:["Previous preterm birth","Twins or more","High blood pressure / preeclampsia","Diabetes","Infections","Smoking & substance use","Short time between pregnancies (<18 months)","Chronic stress & limited prenatal care"],
+  prevent:["Early, consistent prenatal care","Group prenatal care (e.g., CenteringPregnancy)","Low-dose aspirin for people at high risk of preeclampsia (per their clinician)","Doula support & community health workers","Smoking cessation","Healthy birth spacing & postpartum Medicaid coverage"],
+  numbers:[["Preterm birth rate","Preterm live births ÷ total live births × 100"],["Infant mortality rate","Infant deaths (<1 yr) ÷ live births × 1,000"],["Low birth weight","< 2,500 grams"]],
+  watch:"Compare your city's rate to the state and national rate every year (March of Dimes Report Card).",
+  links:[["CDC Preterm Birth","https://www.cdc.gov/maternal-infant-health/preterm-birth/"],["March of Dimes PeriStats","https://www.marchofdimes.org/peristats"]]},
+ {id:"rsv", name:"RSV", emoji:"🦠", color:"#b6ff00", type:"Respiratory virus",
+  oneLiner:"Respiratory syncytial virus — a common cold-like virus that hits babies and older adults hardest.",
+  facts:["Leading cause of hospitalization for U.S. infants.","Almost every child catches RSV by age 2.","Spreads through droplets and by touching contaminated surfaces — it can live for hours on hard surfaces.","Incubation: about 4–6 days. Season usually starts in fall and peaks in winter."],
+  triggers:["Babies under 6 months","Babies born preterm","Kids with chronic lung or heart disease","Adults 75+ and older adults with chronic conditions","Weakened immune systems"],
+  prevent:["Maternal RSV vaccine during pregnancy (seasonal window, around 32–36 weeks) OR","Infant monoclonal antibody (nirsevimab or clesrovimab) for babies entering their first RSV season","RSV vaccine for older adults at higher risk (check current CDC age guidance)","Handwashing, staying home when sick, cleaning surfaces"],
+  numbers:[["Surveillance","% of ED visits for RSV, lab test positivity, RSV-NET hospitalization rates"],["Talking point","Moms usually need EITHER the pregnancy vaccine OR the baby antibody — not both"]],
+  watch:"Track RSV % of ED visits every week Oct–March (live card on the Intel tab).",
+  links:[["CDC RSV","https://www.cdc.gov/rsv/"],["RSV-NET data","https://www.cdc.gov/rsv/php/surveillance/rsv-net.html"]]},
+ {id:"ebola", name:"Ebola", emoji:"🩸", color:"#ff3b3b", type:"Viral hemorrhagic fever (filovirus)",
+  oneLiner:"A severe, often deadly filovirus disease spread through direct contact with body fluids.",
+  facts:["Orthoebolavirus species that infect people: Zaire, Sudan, Bundibugyo, Taï Forest.","Spread by direct contact with blood/body fluids of someone sick or who died from Ebola, contaminated objects, or infected animals (fruit bats are the likely reservoir).","Incubation 2–21 days. People are NOT contagious before symptoms start.","Average case fatality ~50% (has ranged 25–90%)."],
+  triggers:["Caring for sick family members","Unsafe burial practices","Health workers without proper PPE","Handling bushmeat"],
+  prevent:["Ervebo vaccine (protects against Zaire ebolavirus only) — used in ring vaccination","Approved antibody treatments (Inmazeb, Ebanga) for Zaire","Contact tracing: follow every contact for 21 days","Safe & dignified burials","Infection prevention & control in clinics"],
+  numbers:[["CFR","Deaths ÷ confirmed cases × 100"],["Contact follow-up","21 days = the maximum incubation period"],["Outbreak over","42 days (2 × 21) with no new cases"]],
+  watch:"WHO Disease Outbreak News (live on the Intel tab). No licensed vaccine yet for Sudan or Bundibugyo strains.",
+  links:[["CDC Ebola","https://www.cdc.gov/ebola/"],["WHO Ebola fact sheet","https://www.who.int/news-room/fact-sheets/detail/ebola-virus-disease"]]},
+ {id:"marburg", name:"Marburg", emoji:"🦇", color:"#ffb800", type:"Viral hemorrhagic fever (filovirus)",
+  oneLiner:"Ebola's cousin — a filovirus carried by Egyptian fruit bats that live in caves and mines.",
+  facts:["Reservoir: Rousettus aegyptiacus (Egyptian fruit bat).","Spreads person-to-person through direct contact with blood and body fluids, like Ebola.","Incubation 2–21 days. Case fatality has ranged from about 24% to 88%.","No licensed vaccine or specific treatment yet — candidate vaccines have been used in trials during recent outbreaks (e.g., Rwanda 2024)."],
+  triggers:["Mine and cave work or tourism","Caring for sick people at home","Health care settings without IPC","Unsafe burials"],
+  prevent:["Avoid bat-inhabited caves/mines","Contact tracing for 21 days","Supportive care (fluids, electrolytes) improves survival","PPE and infection prevention","Community engagement to fight stigma"],
+  numbers:[["Named for","Marburg, Germany — 1967 lab outbreak from imported monkeys"],["Family","Filoviridae (same family as Ebola)"]],
+  watch:"Recent outbreaks: Equatorial Guinea & Tanzania (2023), Rwanda (2024), Tanzania (2025). Check WHO DON.",
+  links:[["CDC Marburg","https://www.cdc.gov/marburg/"],["WHO Marburg fact sheet","https://www.who.int/news-room/fact-sheets/detail/marburg-virus-disease"]]},
+ {id:"flu", name:"Influenza", emoji:"🤧", color:"#7c4dff", type:"Respiratory virus",
+  oneLiner:"Seasonal flu viruses (A & B) that change every year — and occasionally spark pandemics.",
+  facts:["Antigenic DRIFT = small yearly mutations → why you need a new shot every year.","Antigenic SHIFT = major gene swap (influenza A only) → can cause pandemics (1918, 1957, 1968, 2009).","Incubation ~2 days (1–4). Adults can spread it 1 day before symptoms.","H5N1 bird flu has spread in U.S. dairy cattle and poultry since 2024 — watch for human cases."],
+  triggers:["Kids under 5 (especially under 2)","Adults 65+","Pregnancy","Asthma, diabetes, heart disease","Nursing home residents"],
+  prevent:["Annual flu vaccine for everyone 6 months+","Antivirals (oseltamivir, baloxavir) — best within 48 hours of symptoms","Stay home when sick, cover coughs, wash hands","Pregnancy flu shot protects baby for first months"],
+  numbers:[["Seasonal R0","~1.3"],["Surveillance","ILINet (influenza-like illness), lab positivity, FluSurv-NET, pediatric deaths"]],
+  watch:"CDC FluView every Friday during flu season.",
+  links:[["CDC Flu","https://www.cdc.gov/flu/"],["FluView","https://www.cdc.gov/fluview/"]]},
+ {id:"covid", name:"COVID-19", emoji:"😷", color:"#00ffa3", type:"Respiratory virus",
+  oneLiner:"Disease caused by SARS-CoV-2, now circulating year-round with new variants.",
+  facts:["Spreads mainly through respiratory droplets and aerosols — ventilation matters.","Incubation 2–14 days; usually ~3 days with recent variants.","Can lead to Long COVID — symptoms lasting 3+ months.","Wastewater surveillance (NWSS) gives an early warning before cases show up in clinics."],
+  triggers:["Adults 65+","Weakened immune systems","Chronic conditions","Pregnancy","Crowded indoor spaces"],
+  prevent:["Updated COVID vaccine (eligibility recommendations changed in 2025 — check current CDC & AAP guidance)","Antivirals like Paxlovid within 5 days for high-risk people","Ventilation & filtration","Testing and staying home when sick"],
+  numbers:[["Surveillance","Wastewater levels, % ED visits, test positivity, hospitalizations"],["Long COVID","Symptoms 3+ months after infection"]],
+  watch:"CDC wastewater map + the live ED visit card on the Intel tab.",
+  links:[["CDC COVID","https://www.cdc.gov/covid/"],["CDC Wastewater (NWSS)","https://www.cdc.gov/nwss/"]]},
+ {id:"autism", name:"Autism (ASD)", emoji:"🧩", color:"#ff8a00", type:"Neurodevelopmental",
+  oneLiner:"A neurodevelopmental difference in social communication and patterns of behavior and interests.",
+  facts:["CDC's ADDM Network: about 1 in 31 eight-year-olds identified with autism (2022 data).","Boys are identified about 3–4 times more often than girls — girls are often missed.","Rising numbers mostly reflect better awareness, broader criteria and more screening.","Vaccines do NOT cause autism — dozens of large studies across millions of children agree. The 1998 Wakefield paper was retracted and he lost his medical license."],
+  triggers:["Genetics (highly heritable)","Older parental age","Preterm birth","Some prenatal exposures (e.g., valproate)"],
+  prevent:["Not about 'preventing' autistic people — it's about early identification and support","AAP: autism-specific screening (M-CHAT) at 18 & 24 months","Early intervention services (Part C, birth–3)","IEPs and 504 plans in school","Neurodiversity-affirming care"],
+  numbers:[["ADDM","Autism & Developmental Disabilities Monitoring Network — surveillance of 8-year-olds"],["Screen","M-CHAT-R/F at 18 & 24 months"]],
+  watch:"Misinformation spikes (vaccines, Tylenol in pregnancy). See the Myth Buster in Vaccine Talk.",
+  links:[["CDC Autism data","https://www.cdc.gov/autism/data-research/"],["AAP HealthyChildren: Autism","https://www.healthychildren.org/English/health-issues/conditions/Autism/Pages/default.aspx"]]},
+ {id:"adhd", name:"ADHD", emoji:"⚡", color:"#ffe600", type:"Neurodevelopmental",
+  oneLiner:"Attention-deficit/hyperactivity disorder — differences in attention, impulse control and activity level.",
+  facts:["About 1 in 9 U.S. children (ages 3–17) has ever been diagnosed — around 7 million kids (2022).","About 6% of U.S. adults report a current ADHD diagnosis — many diagnosed as adults.","Three presentations: predominantly inattentive, predominantly hyperactive-impulsive, combined.","Highly heritable. NOT caused by sugar, bad parenting, or screens."],
+  triggers:["Genetics","Preterm birth / low birth weight","Prenatal tobacco/alcohol exposure","Lead exposure"],
+  prevent:["Under 6: parent training in behavior management first","6+: medication + behavior therapy together","School accommodations (504 plan / IEP)","Coaching, routines, body doubling, movement breaks (like this app!)"],
+  numbers:[["Data source","National Survey of Children's Health (NSCH)"],["Diagnosis","DSM-5 criteria; symptoms in 2+ settings before age 12"]],
+  watch:"Medication shortages and adult diagnosis trends are hot topics.",
+  links:[["CDC ADHD","https://www.cdc.gov/adhd/"],["CHADD","https://chadd.org"]]}
+];
+
+const FORMULAS = [
+ {id:"ar", cat:"Epi", name:"Attack Rate (Incidence Proportion)", f:"new cases ÷ population at risk × 100", ins:[["New cases",30],["Population at risk",120]], calc:v=>v[0]/v[1]*100, unit:"%", tip:"Used in outbreaks. It's really a proportion, not a rate."},
+ {id:"ir", cat:"Epi", name:"Incidence Rate", f:"new cases ÷ person-time at risk × 1,000", ins:[["New cases",12],["Person-years",4000]], calc:v=>v[0]/v[1]*1000, unit:"per 1,000 person-yrs", tip:"Person-time handles people followed for different lengths of time."},
+ {id:"prev", cat:"Epi", name:"Prevalence", f:"existing cases ÷ total population × 1,000", ins:[["Existing cases",450],["Total population",5000]], calc:v=>v[0]/v[1]*1000, unit:"per 1,000", tip:"Snapshot of burden. Prevalence ≈ Incidence × Duration."},
+ {id:"cfr", cat:"Epi", name:"Case Fatality Rate", f:"deaths from disease ÷ cases × 100", ins:[["Deaths",18],["Cases",40]], calc:v=>v[0]/v[1]*100, unit:"%", tip:"Measures severity — how deadly a disease is among people who have it."},
+ {id:"sar", cat:"Epi", name:"Secondary Attack Rate", f:"cases among contacts ÷ susceptible contacts × 100", ins:[["Cases among contacts",6],["Susceptible contacts",24]], calc:v=>v[0]/v[1]*100, unit:"%", tip:"Measures how contagious something is in households or close contacts. Don't count the primary case."},
+ {id:"cdr", cat:"Vital stats", name:"Crude Death Rate", f:"deaths ÷ mid-year population × 100,000", ins:[["Deaths",14000],["Mid-year population",1550000]], calc:v=>v[0]/v[1]*100000, unit:"per 100,000", tip:"'Crude' = not adjusted for age. Use age-adjusted rates to compare places."},
+ {id:"imr", cat:"Vital stats", name:"Infant Mortality Rate", f:"infant deaths (<1 yr) ÷ live births × 1,000", ins:[["Infant deaths",150],["Live births",18000]], calc:v=>v[0]/v[1]*1000, unit:"per 1,000 live births", tip:"A key indicator of a community's overall health."},
+ {id:"mmr", cat:"Vital stats", name:"Maternal Mortality Ratio", f:"maternal deaths ÷ live births × 100,000", ins:[["Maternal deaths",6],["Live births",18000]], calc:v=>v[0]/v[1]*100000, unit:"per 100,000 live births", tip:"It's a RATIO because the denominator (births) isn't the population at risk (pregnancies)."},
+ {id:"ptb", cat:"Vital stats", name:"Preterm Birth Rate", f:"births < 37 wks ÷ live births × 100", ins:[["Preterm births",1900],["Live births",18000]], calc:v=>v[0]/v[1]*100, unit:"%", tip:"U.S. rate is about 10%."},
+ {id:"rr", cat:"2×2 Table", name:"Risk Ratio (Relative Risk)", f:"[a ÷ (a+b)] ÷ [c ÷ (c+d)]", ins:[["a: exposed & sick",40],["b: exposed & well",60],["c: unexposed & sick",10],["d: unexposed & well",90]], calc:v=>(v[0]/(v[0]+v[1]))/(v[2]/(v[2]+v[3])), unit:"", tip:"Cohort studies. RR = 1 no association; >1 higher risk; <1 protective."},
+ {id:"or", cat:"2×2 Table", name:"Odds Ratio", f:"(a × d) ÷ (b × c)", ins:[["a: cases exposed",30],["b: controls exposed",15],["c: cases unexposed",20],["d: controls unexposed",35]], calc:v=>(v[0]*v[3])/(v[1]*v[2]), unit:"", tip:"Case-control studies. Cross-multiply: ad over bc."},
+ {id:"rd", cat:"2×2 Table", name:"Attributable Risk (Risk Difference)", f:"risk in exposed − risk in unexposed", ins:[["Risk exposed (%)",40],["Risk unexposed (%)",10]], calc:v=>v[0]-v[1], unit:"percentage points", tip:"How much disease is due to the exposure among exposed people."},
+ {id:"arp", cat:"2×2 Table", name:"Attributable Risk %", f:"(Re − Ru) ÷ Re × 100", ins:[["Risk exposed (%)",40],["Risk unexposed (%)",10]], calc:v=>(v[0]-v[1])/v[0]*100, unit:"%", tip:"Share of exposed people's disease that's due to the exposure."},
+ {id:"par", cat:"2×2 Table", name:"Population Attributable Risk %", f:"(R total − R unexposed) ÷ R total × 100", ins:[["Risk in total pop (%)",18],["Risk unexposed (%)",10]], calc:v=>(v[0]-v[1])/v[0]*100, unit:"%", tip:"How much disease in the WHOLE community you'd prevent by removing the exposure. Great for program planning pitches."},
+ {id:"nnt", cat:"2×2 Table", name:"Number Needed to Treat", f:"1 ÷ absolute risk reduction (as a decimal)", ins:[["Risk control (%)",20],["Risk treated (%)",15]], calc:v=>1/((v[0]-v[1])/100), unit:"people", tip:"Always round UP in real life."},
+ {id:"sens", cat:"Screening", name:"Sensitivity", f:"TP ÷ (TP + FN) × 100", ins:[["True positives",90],["False negatives",10]], calc:v=>v[0]/(v[0]+v[1])*100, unit:"%", tip:"SNOUT: a highly SeNsitive test, when Negative, rules OUT."},
+ {id:"spec", cat:"Screening", name:"Specificity", f:"TN ÷ (TN + FP) × 100", ins:[["True negatives",850],["False positives",50]], calc:v=>v[0]/(v[0]+v[1])*100, unit:"%", tip:"SPIN: a highly SPecific test, when Positive, rules IN."},
+ {id:"ppv", cat:"Screening", name:"Positive Predictive Value", f:"TP ÷ (TP + FP) × 100", ins:[["True positives",90],["False positives",50]], calc:v=>v[0]/(v[0]+v[1])*100, unit:"%", tip:"PPV goes UP when prevalence goes up."},
+ {id:"npv", cat:"Screening", name:"Negative Predictive Value", f:"TN ÷ (TN + FN) × 100", ins:[["True negatives",850],["False negatives",10]], calc:v=>v[0]/(v[0]+v[1])*100, unit:"%", tip:"NPV goes DOWN when prevalence goes up."},
+ {id:"hit", cat:"Vaccines", name:"Herd Immunity Threshold", f:"1 − (1 ÷ R0)", ins:[["R0",15]], calc:v=>(1-1/v[0])*100, unit:"% immune needed", tip:"Measles R0 12–18 → ~92–95% need immunity. That's why small drops in coverage matter."},
+ {id:"vc", cat:"Vaccines", name:"Critical Vaccine Coverage", f:"(1 − 1/R0) ÷ vaccine effectiveness", ins:[["R0",15],["Vaccine effectiveness (%)",97]], calc:v=>(1-1/v[0])/(v[1]/100)*100, unit:"% must be vaccinated", tip:"Imperfect vaccines need higher coverage."},
+ {id:"ve", cat:"Vaccines", name:"Vaccine Efficacy", f:"(ARU − ARV) ÷ ARU × 100  =  (1 − RR) × 100", ins:[["Attack rate unvaccinated (%)",20],["Attack rate vaccinated (%)",2]], calc:v=>(v[0]-v[1])/v[0]*100, unit:"%", tip:"Efficacy = trials. Effectiveness = real world."},
+ {id:"smr", cat:"Biostats", name:"Standardized Mortality Ratio", f:"observed deaths ÷ expected deaths", ins:[["Observed deaths",130],["Expected deaths",100]], calc:v=>v[0]/v[1], unit:"", tip:"SMR > 1 = more deaths than expected. Used in occupational studies."},
+ {id:"z", cat:"Biostats", name:"Z-score", f:"(x − mean) ÷ standard deviation", ins:[["Value (x)",130],["Mean",100],["SD",15]], calc:v=>(v[0]-v[1])/v[2], unit:"SDs from mean", tip:"±1.96 = the middle 95% of a normal curve."},
+ {id:"ci", cat:"Biostats", name:"95% CI for a Proportion (half-width)", f:"1.96 × √[p(1−p) ÷ n]", ins:[["p (%)",30],["n (sample size)",400]], calc:v=>1.96*Math.sqrt((v[0]/100)*(1-v[0]/100)/v[1])*100, unit:"± percentage points", tip:"Bigger n = narrower interval = more precise."},
+ {id:"pid", cat:"Epi", name:"Prevalence ≈ Incidence × Duration", f:"incidence rate × average duration", ins:[["Incidence (per 1,000/yr)",5],["Avg duration (yrs)",8]], calc:v=>v[0]*v[1], unit:"per 1,000", tip:"Better treatment that keeps people alive longer INCREASES prevalence."}
+];
+
+/* Sorting decks: {item, answer, why} */
+const DECKS = {
+ design:{title:"Study Design Detective", icon:"🔬", color:"#00e5ff", options:["RCT","Cohort","Case-control","Cross-sectional","Ecological"], cards:[
+  ["Researchers randomly assign 400 pregnant people to group prenatal care or usual care and compare preterm birth rates.","RCT","Random assignment by the researcher = randomized controlled trial."],
+  ["Kids with asthma and kids without asthma are asked about past cockroach exposure at home.","Case-control","Start with the outcome (cases vs controls), look back at exposure."],
+  ["A survey of 5,000 Philly adults measures current vaping and current asthma at the same time.","Cross-sectional","Exposure and outcome measured at one point in time = snapshot."],
+  ["Nurses who do and don't work night shifts are followed for 20 years to see who develops breast cancer.","Cohort","Start with exposure, follow forward to outcome."],
+  ["Countries with higher vaccination coverage are compared to their national measles rates.","Ecological","Unit of analysis is a group (countries), not individuals."],
+  ["Babies who got nirsevimab vs. babies who didn't are tracked through RSV season using medical records.","Cohort","Exposure groups followed for the outcome (can be retrospective)."],
+  ["Thirty people with a rare liver cancer and 90 matched people without it are interviewed about chemical exposures.","Case-control","Best design for rare diseases."],
+  ["Schools are randomly assigned to receive stock albuterol inhalers or not.","RCT","Cluster randomized trial — randomizing groups is still an RCT."],
+  ["ZIP codes with more tree canopy are compared to ZIP code asthma ED visit rates.","Ecological","Watch out for the ecological fallacy!"],
+  ["The National Survey of Children's Health asks parents if their child currently has ADHD.","Cross-sectional","Measures prevalence at one point in time."],
+  ["People who ate at a wedding are all interviewed about what they ate and whether they got sick.","Cohort","A retrospective cohort — the whole group at risk is known."],
+  ["Hospital patients with Legionnaires' disease are compared to other patients without it on where they stayed.","Case-control","Outcome first, then compare exposures."]]},
+ bias:{title:"Bias Buster", icon:"🎯", color:"#ff2e88", options:["Recall bias","Selection bias","Confounding","Loss to follow-up","Healthy worker effect","Lead-time bias"], cards:[
+  ["Moms of babies with birth defects remember medications they took in pregnancy better than moms of healthy babies.","Recall bias","Cases think harder about past exposures."],
+  ["A study finds coffee drinkers get more lung cancer — but coffee drinkers also smoke more.","Confounding","Smoking is linked to both coffee and lung cancer."],
+  ["Firefighters have lower death rates than the general public, so the study concludes firefighting is healthy.","Healthy worker effect","People who can work are healthier than the general population."],
+  ["A new screening test makes survival look longer only because cancer is found earlier, not because people live longer.","Lead-time bias","Diagnosis moved earlier; death date didn't change."],
+  ["Only people with internet access answer an online survey about telehealth satisfaction.","Selection bias","The sample doesn't represent the target population."],
+  ["40% of participants in the high-dose group drop out because of side effects.","Loss to follow-up","Differential dropout distorts the results."],
+  ["Parents of autistic kids are more likely to recall their child's vaccine dates than parents of non-autistic kids.","Recall bias","Big reason case-control vaccine studies use medical records instead of memory."],
+  ["Volunteers for a fitness study are already more health-conscious than average.","Selection bias","Volunteer bias is a type of selection bias."],
+  ["Age explains the link between gray hair and heart disease.","Confounding","Age causes both."],
+  ["Mortality looks lower in the screened group because slow-growing tumors are easier to catch.","Lead-time bias","Closely related: length-time bias. Both make screening look better."]]},
+ sem:{title:"Social Ecological Model Sort", icon:"🌍", color:"#b6ff00", options:["Individual","Interpersonal","Organizational","Community","Policy"], cards:[
+  ["Teaching a teen how to use a spacer with their inhaler.","Individual","Knowledge, skills, attitudes of one person."],
+  ["A peer support group for new moms to keep breastfeeding.","Interpersonal","Family, friends, peers, social networks."],
+  ["A school district stocks albuterol in every school nurse's office.","Organizational","Rules and practices inside an organization (school, workplace, church)."],
+  ["A citywide mobile vaccine van tour with trusted barbers and pastors.","Community","Relationships between organizations; community norms."],
+  ["A state law requiring smoke-free public housing.","Policy","Local, state, federal laws and regulations."],
+  ["A church adds a 'health minute' to Sunday service about flu shots.","Organizational","Church = organization."],
+  ["Medicaid extends postpartum coverage to 12 months.","Policy","Public policy change."],
+  ["Grandma learns how to recognize RSV warning signs in the baby she babysits.","Interpersonal","Caregivers and family."],
+  ["A motivational interviewing session to help someone quit vaping.","Individual","Changing one person's behavior."],
+  ["A neighborhood coalition pushes landlords to fix mold.","Community","Coalitions and community mobilization."],
+  ["A workplace offers on-site flu clinics and paid sick leave.","Organizational","Employer practices."],
+  ["A city soda tax.","Policy","Fiscal policy."]]},
+ prevention:{title:"Levels of Prevention", icon:"🛡️", color:"#ffb800", options:["Primordial","Primary","Secondary","Tertiary"], cards:[
+  ["MMR vaccine at 12 months.","Primary","Prevents disease before it starts."],
+  ["Newborn screening heel-prick test.","Secondary","Early detection before symptoms."],
+  ["Pulmonary rehab for someone with COPD.","Tertiary","Reduces complications of existing disease."],
+  ["Building safe sidewalks and parks so kids never pick up inactivity habits.","Primordial","Prevents the risk factors themselves from emerging."],
+  ["Mammogram screening.","Secondary","Catch it early."],
+  ["Asthma action plan for a child who already has asthma.","Tertiary","Managing existing disease to prevent attacks and ER visits."],
+  ["Handwashing campaign during flu season.","Primary","Stops infection from happening."],
+  ["M-CHAT autism screening at 18 months.","Secondary","Early identification → early intervention."],
+  ["Cardiac rehab after a heart attack.","Tertiary","Prevents another event and disability."],
+  ["Lead pipe replacement before anyone is exposed.","Primordial","Removes the environmental risk factor itself (some textbooks call this primary)."],
+  ["Condoms and PrEP.","Primary","Prevent infection."],
+  ["Blood pressure screening at a barbershop.","Secondary","Detect early, treat early."]]},
+ smart:{title:"SMART or Not?", icon:"✅", color:"#7c4dff", options:["SMART","Not SMART"], cards:[
+  ["By June 30, 2027, increase the percentage of 2-year-olds in ZIP 19132 who are up to date on MMR from 78% to 88%.","SMART","Specific, measurable, achievable, relevant, time-bound."],
+  ["Improve asthma in Philadelphia.","Not SMART","Not specific, measurable, or time-bound."],
+  ["Educate moms about preterm birth.","Not SMART","No number, no timeline, no measurable outcome."],
+  ["By December 2027, 200 families enrolled in the home-visit program will have an asthma action plan on file.","SMART","Clear who, what, how many, by when."],
+  ["Reduce COVID by 100% this month.","Not SMART","Not achievable/realistic."],
+  ["Within 12 months, reduce asthma-related ED visits among enrolled children by 25% compared to baseline.","SMART","Measurable outcome objective with a timeline."],
+  ["Hold some vaccine events soon.","Not SMART","Vague and no timeframe."],
+  ["By the end of Q2, train 30 community health workers on RSV prevention, measured by pre/post tests.","SMART","Process objective with measurement."]]},
+ logic:{title:"Logic Model Builder", icon:"🧱", color:"#00ffa3", options:["Inputs","Activities","Outputs","Outcomes","Impact"], cards:[
+  ["Grant funding and 4 community health workers.","Inputs","Resources you invest."],
+  ["CHWs conduct home visits to remove asthma triggers.","Activities","What the program DOES."],
+  ["150 home visits completed; 400 mattress covers given.","Outputs","Direct, countable products of activities."],
+  ["Parents' asthma trigger knowledge increases 40%.","Outcomes","Short/medium-term changes in knowledge, behavior."],
+  ["Childhood asthma deaths in the city decline over 10 years.","Impact","Long-term population-level change."],
+  ["Partnership with the housing authority.","Inputs","Partners are resources."],
+  ["Run monthly vaccine Q&A sessions at churches.","Activities","Program actions."],
+  ["12 sessions held with 360 attendees.","Outputs","Counts of what was delivered."],
+  ["MMR coverage among attendees' kids rises from 82% to 91%.","Outcomes","Behavior change."],
+  ["Measles elimination is restored and sustained.","Impact","The big long-term goal."]]},
+ services:{title:"10 Essential Services", icon:"🏛️", color:"#ff8a00", options:["Assess","Policy Development","Assurance"], cards:[
+  ["Monitor population health (e.g., a community health assessment).","Assess","Core function 1: Assessment."],
+  ["Investigate, diagnose and address health hazards (outbreak investigation).","Assess","Assessment."],
+  ["Communicate effectively to inform and educate (vaccine campaign).","Policy Development","Policy development core function."],
+  ["Strengthen community partnerships (coalitions).","Policy Development","Policy development."],
+  ["Create and champion policies and laws.","Policy Development","Policy development."],
+  ["Use legal and regulatory actions (restaurant inspections).","Policy Development","Policy development (enforcement)."],
+  ["Assure equitable access to care (connect families to clinics).","Assurance","Assurance."],
+  ["Build a diverse, skilled workforce (training CHWs).","Assurance","Assurance."],
+  ["Improve and innovate through evaluation and research.","Assurance","Assurance."],
+  ["Build and maintain a strong organizational infrastructure.","Assurance","Assurance."]]},
+ transmission:{title:"How Does It Spread?", icon:"🧫", color:"#ff3b3b", options:["Airborne/droplet","Direct contact w/ body fluids","Vector-borne","Foodborne/waterborne","Not contagious"], cards:[
+  ["Measles","Airborne/droplet","Can hang in the air for up to 2 hours after an infected person leaves."],
+  ["Ebola","Direct contact w/ body fluids","Blood, vomit, feces, and other body fluids of a sick or deceased person."],
+  ["Marburg","Direct contact w/ body fluids","Same as Ebola; original spillover from fruit bats."],
+  ["Lyme disease","Vector-borne","Blacklegged (deer) ticks."],
+  ["Salmonella","Foodborne/waterborne","Poultry, eggs, produce, raw oysters…"],
+  ["Asthma","Not contagious","Chronic disease — triggered, not transmitted."],
+  ["Autism","Not contagious","Neurodevelopmental."],
+  ["Dengue","Vector-borne","Aedes mosquitoes."],
+  ["RSV","Airborne/droplet","Also from surfaces (fomites)."],
+  ["Cholera","Foodborne/waterborne","Contaminated water."],
+  ["Influenza","Airborne/droplet","Droplets & aerosols."],
+  ["West Nile virus","Vector-borne","Culex mosquitoes — Philly has seasonal mosquito surveillance."]]},
+ mythfact:{title:"Myth or Fact? (Vaccines)", icon:"💉", color:"#ff2e88", options:["MYTH","FACT"], cards:[
+  ["Vaccines cause autism.","MYTH","Studies of millions of children (including a Danish study of 650,000+ kids) find no link."],
+  ["Babies' immune systems handle thousands of germs every day.","FACT","The vaccine schedule is a tiny fraction of what babies fight daily."],
+  ["The flu shot can give you the flu.","MYTH","Flu shots contain inactivated virus or a single protein — they can't cause flu."],
+  ["Measles can wipe out immune memory for other infections.","FACT","'Immune amnesia' — measles can erase existing antibodies for years."],
+  ["HPV vaccine makes teens more likely to have sex.","MYTH","Multiple studies show no change in sexual behavior."],
+  ["Thimerosal (mercury) has been removed from or reduced to trace amounts in all routine childhood vaccines since 2001.","FACT","And it's ethylmercury, which leaves the body quickly — not the methylmercury in fish."],
+  ["Spreading out vaccines is safer.","MYTH","No evidence it's safer; it leaves kids unprotected longer during the most vulnerable months."],
+  ["Babies get more aluminum from breast milk or formula in the first 6 months than from vaccines.","FACT","Aluminum adjuvants are in tiny amounts the body processes."],
+  ["COVID mRNA vaccines change your DNA.","MYTH","mRNA never enters the cell nucleus where DNA lives and breaks down within days."],
+  ["Anyone can submit a report to VAERS, so a report does not prove a vaccine caused anything.","FACT","VAERS is an early-warning signal system; it's studied further with VSD and other systems."],
+  ["Vitamin A prevents measles.","MYTH","Vitamin A is used under medical care for kids who are already sick or deficient. It doesn't prevent infection, and too much is toxic."],
+  ["Natural immunity is always better than vaccine immunity.","MYTH","'Natural' immunity requires surviving the disease and its risks — like measles encephalitis or death."]]}
+};
+
+const VOCAB = [
+ ["Endemic","Constant, expected level of disease in an area"],["Epidemic","Cases above what's normally expected"],["Pandemic","An epidemic spread across countries/continents"],["R0","Average # infected by one case in a fully susceptible population"],["Incubation period","Time from exposure to symptoms"],["Fomite","An object that can carry germs (doorknob)"],["Zoonosis","Disease that jumps from animals to people"],["Reservoir","Where a pathogen normally lives and multiplies"],["Case definition","Standard criteria for who counts as a case"],["Index case","First case that brings attention to an outbreak"],["Herd immunity","Indirect protection when enough people are immune"],["Confounder","A third variable linked to both exposure and outcome"],["P-value","Probability of results this extreme if the null is true"],["Null hypothesis","Assumes no difference / no association"],["Type I error","False positive — rejecting a true null (α)"],["Type II error","False negative — missing a real effect (β)"],["Power","1 − β: chance of detecting a real effect"],["Surveillance","Ongoing, systematic collection & use of health data"],["Syndromic surveillance","Tracking symptoms (like ED visits) before diagnoses"],["Antigenic shift","Major flu gene swap → pandemic risk"],["Antigenic drift","Small yearly flu mutations"],["Health equity","Everyone has a fair, just chance to be healthy"],["SDOH","Social determinants: where we live, learn, work, play"],["Cold chain","Keeping vaccines at the right temperature"],["Epi curve","Histogram of cases by onset date"],["Quarantine","Separating EXPOSED people who aren't sick yet"],["Isolation","Separating SICK people"],["Sensitivity","Ability to correctly find people WITH disease"],["Specificity","Ability to correctly clear people WITHOUT disease"],["Effect modification","Association differs across levels of a 3rd variable"]
+];
+
+const WHOAMI = [
+ {a:"Ebola", clues:["I'm a virus from the Filoviridae family.","My likely natural home is fruit bats.","I spread through blood and body fluids, including from people who have died.","Contacts are followed for 21 days after exposure to me.","Ervebo is a vaccine against my Zaire species."]},
+ {a:"Marburg", clues:["I'm a hemorrhagic fever virus.","My reservoir lives in caves and mines.","I was first identified in a German lab in 1967.","I'm a cousin of Ebola.","My host is the Egyptian fruit bat."]},
+ {a:"RSV", clues:["I'm most famous in the fall and winter.","Almost every kid catches me by age 2.","I'm the #1 reason U.S. babies are hospitalized.","Nirsevimab is a monoclonal antibody against me.","Pregnant people can get a vaccine against me at 32–36 weeks."]},
+ {a:"Influenza", clues:["I'm a respiratory virus with types A and B.","My surface has H and N proteins.","I drift every year and sometimes shift.","I caused a famous pandemic in 1918.","Oseltamivir (Tamiflu) treats me."]},
+ {a:"COVID-19", clues:["I was declared a pandemic in March 2020.","Wastewater can warn you I'm rising.","Variants of me get Greek letter names.","My long-term effects can last 3+ months.","Paxlovid is an antiviral used against me."]},
+ {a:"Asthma", clues:["I'm not contagious.","Cockroaches, mold, and smoke make me worse.","I peak among kids every September.","Inhaled corticosteroids help control me.","Action plans use green, yellow, and red zones for me."]},
+ {a:"Preterm birth", clues:["I'm a maternal and infant health outcome.","I have a cutoff of 37 weeks.","Black mothers in the U.S. face me about 50% more often.","Group prenatal care may reduce me.","March of Dimes gives states a report card grade on me."]},
+ {a:"Autism", clues:["I'm neurodevelopmental.","CDC estimates me in 1 in 31 eight-year-olds.","The ADDM Network tracks me.","M-CHAT screens for me at 18 and 24 months.","A retracted 1998 paper falsely blamed vaccines for me."]},
+ {a:"ADHD", clues:["I'm neurodevelopmental.","I'm highly heritable.","I have inattentive, hyperactive-impulsive, and combined presentations.","For kids under 6, parent behavior training is first-line.","Stimulants are a common medication for me."]},
+ {a:"Measles", clues:["I'm one of the most contagious diseases known.","My R0 can be 12–18.","I can hang in the air for 2 hours.","I can cause 'immune amnesia'.","My vaccine is MMR."]},
+ {a:"Pertussis", clues:["I'm a bacterial infection.","I'm also called the 100-day cough.","I'm most dangerous for babies.","Pregnant people get Tdap to protect newborns from me.","My name comes from my 'whoop'."]},
+ {a:"Lead poisoning", clues:["I'm environmental, not infectious.","There's no safe level of me in kids' blood.","Old paint in pre-1978 homes is a big source of me.","I can lower IQ and affect attention.","Philadelphia requires certain landlords to certify homes are free of me."]}
+];
+
+const PARENT_SIMS = [
+ {parent:"I read that vaccines cause autism. I'm not risking it.", opts:[
+  ["That's been debunked. You need to vaccinate.",-15,"Correct facts, but it shuts the parent down. People dig in when they feel judged."],
+  ["I hear how much you love your child — I want the same thing. This is something researchers looked at really closely, across millions of kids, and they keep finding no link. Can I share what we know about what does cause autism?",20,"CASE approach: Corroborate the concern, share the science, offer to explain. Respect first, facts second."],
+  ["Well, it's your choice. Let me know if you change your mind.",-5,"Too passive — a strong recommendation from a trusted messenger is one of the most powerful things you can give."]]},
+ {parent:"Why does my baby need so many shots at once? It seems like too much.", opts:[
+  ["Babies' immune systems are amazing — they handle thousands of germs every day just from eating and crawling. The shots today use fewer antigens than the vaccines of the 1980s. Spacing them out just leaves baby unprotected longer.",20,"Validating, concrete, reassuring comparison."],
+  ["The CDC says so.",-10,"Appeal to authority without explanation rarely builds trust — and some parents distrust federal agencies right now."],
+  ["We can do a few now and the rest later, no problem.",-5,"Delaying increases the window of risk and the number of visits."]]},
+ {parent:"I'd rather my kid get chickenpox naturally like I did.", opts:[
+  ["Natural immunity is fake.",-15,"Not accurate and dismissive."],
+  ["A lot of us had it as kids! Most kids recover, but some get serious skin infections, pneumonia, or brain swelling, and we can't predict which kids. The vaccine gives that protection without the gamble.",20,"Corroborates their experience and reframes risk."],
+  ["You could get sued if your kid spreads it.",-10,"Fear and threats damage trust."]]},
+ {parent:"There's mercury and formaldehyde in vaccines!", opts:[
+  ["Good question to ask about ingredients. Routine childhood vaccines haven't had mercury-based thimerosal since 2001 — or only trace amounts. Formaldehyde? Your baby's own body naturally makes more of it every day than is in any vaccine.",20,"Answers the specific ingredient with a relatable comparison."],
+  ["Those ingredients are totally fine, don't worry about it.",-5,"Dismissing concerns without info feels like brushing them off."],
+  ["Here's a 40-page safety report.",-5,"Information overload. Keep it short and conversational."]]},
+ {parent:"My friend's TikTok said the HPV shot made her daughter sick.", opts:[
+  ["That sounds scary for your friend — I'm sorry. Fainting and soreness can happen with shots in teens, which is why we have them sit for 15 minutes. HPV vaccine has been given to hundreds of millions of people and prevents 6 kinds of cancer.",20,"Empathy + specific safety facts + the benefit."],
+  ["TikTok isn't a real source.",-10,"Mocks their information source — creates defensiveness."],
+  ["Maybe wait until she's older then.",-5,"The vaccine works best at 9–12 and requires fewer doses."]]},
+ {parent:"Even the government changed its website about autism and vaccines. So who do I believe?", opts:[
+  ["It's confusing when messages change — you're right to ask. What hasn't changed is the research: big studies across many countries and millions of kids keep finding no link. Pediatricians (AAP) still strongly recommend vaccines. I'm happy to walk through it with you.",20,"Acknowledges the confusion honestly, points to the evidence and trusted professional bodies."],
+  ["The website is wrong, ignore it.",-10,"Dismissive without explanation."],
+  ["I don't know, honestly.",-10,"Your confidence is part of your recommendation. Know your sources."]]},
+ {parent:"I'm pregnant and heard Tylenol causes autism. What do I take for a fever?", opts:[
+  ["Great question to ask! A fever in pregnancy can itself be risky for the baby. Big studies — including one with over 2 million Swedish siblings — didn't find that acetaminophen causes autism. ACOG says it's still an appropriate choice when needed. Check with your OB on dose.",20,"Accurate, cites strong evidence and the professional society, routes to her clinician."],
+  ["Just tough it out with no medicine.",-15,"Untreated fever can be harmful in pregnancy."],
+  ["Take whatever you want.",-10,"Not guidance."]]},
+ {parent:"Measles isn't a big deal. Everyone used to get it.", opts:[
+  ["About 1 in 5 unvaccinated people with measles in the U.S. ends up hospitalized, and it can cause brain swelling and death. It's spreading again — the U.S. has been seeing large outbreaks. Two doses of MMR are about 97% effective.",20,"Specific numbers + current relevance + effectiveness."],
+  ["You're wrong.",-15,"Confrontational."],
+  ["Yeah, it's usually mild.",-20,"Agreeing with misinformation."]]}
+];
+
+const SCHEDULE = [
+ ["Pregnancy","Tdap (each pregnancy, 27–36 wks), flu, RSV (seasonal, 32–36 wks) — check COVID guidance"],
+ ["Birth","Hepatitis B (dose 1); RSV antibody if mom didn't get RSV vaccine (Oct–Mar)"],
+ ["1–2 months","Hep B (dose 2)"],
+ ["2 months","DTaP, Hib, Polio (IPV), Pneumococcal (PCV), Rotavirus"],
+ ["4 months","DTaP, Hib, IPV, PCV, Rotavirus"],
+ ["6 months","DTaP, PCV, (Hib & rotavirus depending on brand); flu yearly starts at 6 mo"],
+ ["6–18 months","Hep B (dose 3), IPV (dose 3)"],
+ ["12–15 months","MMR, Varicella (chickenpox), Hib, PCV"],
+ ["12–23 months","Hepatitis A (2 doses, 6 months apart)"],
+ ["15–18 months","DTaP (dose 4)"],
+ ["4–6 years","DTaP, IPV, MMR, Varicella"],
+ ["11–12 years","Tdap, HPV (can start at 9), MenACWY"],
+ ["16 years","MenACWY booster; MenB (shared decision)"]
+];
+
+const TALK_TOOLS = [
+ ["Presumptive approach","Say 'Today Jaylen is due for his 12-month shots: MMR, chickenpox…' instead of 'What do you want to do about shots?' Parents accept more often."],
+ ["CASE method","Corroborate (find common ground) → About me (why you're credible) → Science (what the data says) → Explain/advise (your recommendation)."],
+ ["Motivational interviewing (OARS)","Open questions, Affirmations, Reflective listening, Summarizing. Ask: 'What have you heard?' 'What worries you most?'"],
+ ["Truth sandwich","Fact → name the myth briefly → explain why it's wrong → repeat the fact. Don't repeat the myth louder than the truth."],
+ ["Keep the door open","If they say no today, say 'I'd love to talk again at the next visit,' and document. Many hesitant parents vaccinate later."],
+ ["Know the current landscape","CDC and AAP schedules have differed on some vaccines since 2025. Pediatricians follow the AAP schedule. Check both before you talk to parents."]
+];
+
+const CAREER = [
+ {id:"cph", kind:"cert", name:"CPH — Certified in Public Health", org:"NBPHE", url:"https://www.nbphe.org", info:"The core public health credential. Eligibility via a degree/student status from a CEPH-accredited program OR a bachelor's + 5 years of public health experience (check current rules)."},
+ {id:"ches", kind:"cert", name:"CHES® / MCHES® — Health Education Specialist", org:"NCHEC", url:"https://www.nchec.org", info:"Great for program planning & community interventions. Requires health-education coursework. Covers needs assessment, planning, implementation, evaluation."},
+ {id:"aec", kind:"cert", name:"AE-C — Certified Asthma Educator", org:"NAECB", url:"https://www.naecb.com", info:"Perfect for your asthma focus. Shows you can teach asthma self-management and trigger control."},
+ {id:"cic", kind:"cert", name:"CIC — Certification in Infection Control", org:"CBIC", url:"https://www.cbic.org", info:"For infection preventionists. Requires experience in infection prevention (also see their entry-level a-IPC credential)."},
+ {id:"chw", kind:"cert", name:"Certified Community Health Worker (PA)", org:"Pennsylvania Certification Board", url:"https://www.google.com/search?q=Pennsylvania+Certification+Board+community+health+worker+certification", info:"State CHW credential — useful if you supervise or train CHWs in your organization."},
+ {id:"fema", kind:"training", name:"FEMA ICS-100, 200, 700 & 800", org:"FEMA EMI (free)", url:"https://training.fema.gov/nims/", info:"Free online incident command trainings that health departments love to see for outbreak/emergency response."},
+ {id:"principles", kind:"training", name:"Principles of Epidemiology in Public Health Practice", org:"CDC (free)", url:"https://www.google.com/search?q=CDC+Principles+of+Epidemiology+in+Public+Health+Practice+self-study", info:"CDC's classic epi self-study course — covers every formula in this app."},
+ {id:"train", kind:"training", name:"CDC TRAIN courses (free CE)", org:"TRAIN Learning Network", url:"https://www.train.org/cdctrain", info:"Free courses incl. 'You Call the Shots' vaccine modules, epi, emergency preparedness."},
+ {id:"mhfa", kind:"training", name:"Mental Health First Aid", org:"National Council for Mental Wellbeing", url:"https://www.mentalhealthfirstaid.org", info:"1-day certification to help someone in a mental health crisis."},
+ {id:"apha", kind:"org", name:"American Public Health Association (APHA)", org:"Join", url:"https://www.apha.org", info:"The big national association. Student/early-career rates. Join a section like Maternal & Child Health or Epidemiology."},
+ {id:"ppha", kind:"org", name:"Pennsylvania Public Health Association", org:"APHA state affiliate", url:"https://www.google.com/search?q=Pennsylvania+Public+Health+Association", info:"Your state affiliate — local networking, conferences, advocacy."},
+ {id:"sophe", kind:"org", name:"SOPHE — Society for Public Health Education", org:"Join", url:"https://www.sophe.org", info:"Health education & promotion community. Pairs perfectly with CHES."},
+ {id:"naccho", kind:"org", name:"NACCHO", org:"Local health departments", url:"https://www.naccho.org", info:"National Association of County & City Health Officials — webinars, toolkits, job board."},
+ {id:"cste", kind:"org", name:"CSTE", org:"Epidemiologists", url:"https://www.cste.org", info:"Council of State and Territorial Epidemiologists — surveillance & applied epi fellowships."},
+ {id:"nachw", kind:"org", name:"National Association of Community Health Workers", org:"Join", url:"https://nachw.org", info:"National voice of CHWs."},
+ {id:"mrc", kind:"org", name:"Medical Reserve Corps (Philadelphia)", org:"Volunteer", url:"https://www.google.com/search?q=Philadelphia+Medical+Reserve+Corps+volunteer", info:"Volunteer for vaccine clinics and emergencies — great real-world outbreak experience."},
+ {id:"ser", kind:"org", name:"Society for Epidemiologic Research", org:"Join", url:"https://epiresearch.org", info:"Epi research community; student membership and webinars."},
+ {id:"immunize", kind:"org", name:"Immunize.org", org:"Free resources", url:"https://www.immunize.org", info:"Vaccine handouts, 'Ask the Experts', and parent education materials."}
+];
+
+const INTEL_LINKS = {
+ city:[["Philadelphia Dept. of Public Health","https://www.phila.gov/departments/department-of-public-health/"],["Philly Health Information Portal (data)","https://hip.phila.gov"],["Philly health news (Google News)","https://news.google.com/search?q=Philadelphia%20health%20department"]],
+ state:[["PA Department of Health","https://www.pa.gov/agencies/health"],["PA health news (Google News)","https://news.google.com/search?q=Pennsylvania%20Department%20of%20Health"]],
+ us:[["CDC Health Alert Network (HAN)","https://www.cdc.gov/han/"],["CDC Respiratory Illness Data","https://www.cdc.gov/respiratory-viruses/data/index.html"],["CDC FluView","https://www.cdc.gov/fluview/"],["CDC Wastewater (NWSS)","https://www.cdc.gov/nwss/"],["MMWR (weekly report)","https://www.cdc.gov/mmwr/"],["CIDRAP news","https://www.cidrap.umn.edu"]],
+ world:[["WHO Disease Outbreak News","https://www.who.int/emergencies/disease-outbreak-news"],["Africa CDC","https://africacdc.org"],["ProMED","https://promedmail.org"],["ECDC threats report","https://www.ecdc.europa.eu/en/infectious-disease-topics"]]
+};
+
+const LEVELS = ["Curious Intern","Data Collector","Contact Tracer","Field Epi","Outbreak Investigator","Biostat Wizard","Program Architect","EIS Officer","Health Commissioner","Surgeon General","Public Health Legend"];
+
+const BADGES = {
+ first:["🎮","First Game","Played your first game"],
+ combo5:["🔥","On Fire","5 correct in a row"],
+ combo10:["☄️","Unstoppable","10 correct in a row"],
+ detective:["🕵🏾‍♀️","Disease Detective","Solved an outbreak"],
+ herd:["🐑","Herd Hero","Stopped an outbreak in the simulator"],
+ myth:["🧯","Myth Buster","Busted 10 myths"],
+ formula:["🧮","Formula Ace","Scored 10+ in Formula Sprint"],
+ reader:["📚","Disease Nerd","Opened all 9 disease files"],
+ talker:["🗣️","Parent Whisperer","Scored 130+ trust in Parent Talk"],
+ career:["🎓","Career Moves","Started a cert or membership"],
+ focus:["⏱️","Locked In","Finished a focus sprint"],
+ streak3:["📅","3-Day Streak","Played 3 days in a row"],
+ memory:["🧠","Total Recall","Cleared a memory board"],
+ whoami:["❓","Who Am I Pro","Guessed 5 diseases"]
+};
+
+/* ===================== CORE ===================== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const today=()=>new Date().toISOString().slice(0,10);
+const KEY="epiquest_v1";
+const DEF={xp:0,badges:[],best:{},read:[],career:{},stats:{},day:{},streak:0,lastDay:"",settings:{city:"Philadelphia",state:"Pennsylvania",sound:true},notes:""};
+let S;try{S=Object.assign({},DEF,JSON.parse(localStorage.getItem(KEY)||"{}"))}catch(e){S={...DEF}}
+S.settings=Object.assign({},DEF.settings,S.settings);
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+
+function touchDay(){const t=today();if(S.lastDay===t)return;const y=new Date(Date.now()-864e5).toISOString().slice(0,10);S.streak=S.lastDay===y?S.streak+1:1;S.lastDay=t;S.day={date:t,games:0,correct:0,formula:0,myth:0,read:0};if(S.streak>=3)badge("streak3");save()}
+function bump(k,n=1){touchDay();S.day[k]=(S.day[k]||0)+n;S.stats[k]=(S.stats[k]||0)+n;save();renderHeader()}
+
+/* levels: level L needs 150*L*(L+1)/2 xp */
+const need=l=>75*l*(l+1);
+function levelOf(xp){let l=0;while(xp>=need(l+1))l++;return l}
+function addXP(n,el){const before=levelOf(S.xp);S.xp+=n;save();renderHeader();
+ const f=document.createElement("div");f.className="xpfloat";f.textContent="+"+n+" XP";
+ const r=el&&el.getBoundingClientRect?el.getBoundingClientRect():{left:innerWidth/2,top:innerHeight/2};
+ f.style.left=(r.left+(r.width||0)/2-40)+"px";f.style.top=(r.top)+"px";document.body.appendChild(f);setTimeout(()=>f.remove(),1100);
+ const after=levelOf(S.xp);if(after>before){sfx("level");confetti(160);toast("LEVEL UP! You're now a "+LEVELS[Math.min(after,LEVELS.length-1)]+" 🎉")}}
+function badge(id){if(S.badges.includes(id))return;S.badges.push(id);save();const b=BADGES[id];setTimeout(()=>{toast(b[0]+" Badge unlocked: "+b[1]);sfx("level");confetti(80)},400)}
+
+/* sound */
+let AC;function sfx(t){if(!S.settings.sound)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const seq={right:[[660,.07],[880,.1]],wrong:[[220,.18]],level:[[523,.08],[659,.08],[784,.08],[1046,.2]],click:[[440,.03]],tick:[[1200,.02]]}[t]||[[440,.05]];let tt=AC.currentTime;seq.forEach(([f,d])=>{const o=AC.createOscillator(),g=AC.createGain();o.type=t==="wrong"?"sawtooth":"square";o.frequency.value=f;g.gain.setValueAtTime(.08,tt);g.gain.exponentialRampToValueAtTime(.001,tt+d);o.connect(g);g.connect(AC.destination);o.start(tt);o.stop(tt+d);tt+=d})}catch(e){}}
+
+function toast(m){const t=document.createElement("div");t.className="toast";t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2700)}
+
+/* confetti */
+let cParts=[],cRun=false;
+function confetti(n=120){const c=$("#confetti"),x=c.getContext("2d");c.width=innerWidth;c.height=innerHeight;const cols=["#ff2e88","#00e5ff","#b6ff00","#ffe600","#ff8a00","#7c4dff"];
+ for(let i=0;i<n;i++)cParts.push({x:innerWidth/2+rnd(-80,80),y:innerHeight/3,vx:(Math.random()-.5)*16,vy:Math.random()*-14-4,s:rnd(6,12),c:pick(cols),r:Math.random()*6,vr:(Math.random()-.5)*.4,l:120});
+ if(cRun)return;cRun=true;(function loop(){x.clearRect(0,0,c.width,c.height);cParts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.45;p.vx*=.99;p.r+=p.vr;p.l--;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6);x.restore()});cParts=cParts.filter(p=>p.l>0&&p.y<c.height+20);if(cParts.length)requestAnimationFrame(loop);else{cRun=false;x.clearRect(0,0,c.width,c.height)}})()}
+
+/* background viruses */
+function bgfx(){const g=$("#bgfx"),em=["🦠","🧬","💉","🧫","🫁","🔬","🦇","📊","🧪"];for(let i=0;i<16;i++){const b=document.createElement("div");b.className="bug";b.textContent=pick(em);b.style.left=rnd(0,95)+"vw";b.style.fontSize=rnd(26,70)+"px";b.style.animationDuration=rnd(22,48)+"s";b.style.animationDelay=-rnd(0,40)+"s";g.appendChild(b)}}
+
+/* ===================== HEADER / NAV ===================== */
+const TABS=[["home","🏠","Home"],["intel","📡","Intel"],["diseases","🦠","Diseases"],["games","🎮","Games"],["formulas","🧮","Formulas"],["vaccines","💉","Vaccines"],["career","🎓","Career"]];
+function renderHeader(){const l=levelOf(S.xp),lo=need(l),hi=need(l+1);
+ $("#hdr").innerHTML=`<div class="logo" onclick="go('home')">EPI QUEST</div>
+ <div class="xpbox"><div class="lvl">LV ${l+1}</div><div style="flex:1"><div class="mini" style="margin-bottom:2px">${LEVELS[Math.min(l,LEVELS.length-1)]} · ${S.xp} XP</div><div class="xpbar"><div class="xpfill" style="width:${Math.min(100,(S.xp-lo)/(hi-lo)*100)}%"></div></div></div></div>
+ <div class="chip" title="Daily streak">🔥 ${S.streak||0}</div><div class="chip" title="Badges">🏅 ${S.badges.length}</div>
+ <div class="chip focusring" id="focus" onclick="focusSprint()" style="cursor:pointer" title="10-minute focus sprint">${focusLabel()}</div>
+ <button class="iconbtn" onclick="toggleSound()" title="Sound">${S.settings.sound?"🔊":"🔇"}</button>`}
+function toggleSound(){S.settings.sound=!S.settings.sound;save();renderHeader()}
+function renderNav(cur){$("#nav").innerHTML=TABS.map(([id,e,n])=>`<button class="${cur===id?"on":""}" onclick="go('${id}')"><span>${e}</span>${n}</button>`).join("")}
+function go(p){location.hash=p}
+function route(){const p=(location.hash||"#home").slice(1)||"home";const fn=PAGES[p]||PAGES.home;renderNav(p);const m=$("#main");m.innerHTML=`<div class="page">${fn()}</div>`;window.scrollTo(0,0);(AFTER[p]||(()=>{}))();sfx("click")}
+
+/* focus sprint */
+let focusEnd=0,focusInt;
+function focusLabel(){if(!focusEnd)return"⏱️ Focus 10";const s=Math.max(0,Math.round((focusEnd-Date.now())/1000));return"⏱️ "+Math.floor(s/60)+":"+String(s%60).padStart(2,"0")}
+function focusSprint(){if(focusEnd){if(confirm("End this focus sprint early?")){focusEnd=0;clearInterval(focusInt);renderHeader()}return}
+ focusEnd=Date.now()+10*60*1000;toast("10-minute focus sprint started. You got this! ⚡");clearInterval(focusInt);
+ focusInt=setInterval(()=>{const el=$("#focus");if(el)el.textContent=focusLabel();if(Date.now()>=focusEnd){clearInterval(focusInt);focusEnd=0;renderHeader();confetti(200);sfx("level");addXP(50);badge("focus");toast("Sprint done! +50 XP. Take a 3-minute movement break 💃🏾")}},1000)}
+
+/* ===================== PAGES ===================== */
+const AFTER={};
+const QUESTS=[["games",2,"Play 2 games"],["correct",15,"Get 15 answers right"],["formula",5,"Solve 5 formula problems"],["myth",3,"Bust 3 vaccine myths"],["read",1,"Open a disease file"]];
+function dailyQuests(){touchDay();const d=new Date().getDate();return [QUESTS[d%5],QUESTS[(d+2)%5],QUESTS[(d+4)%5]]}
+const PAGES={
+home(){const q=dailyQuests();const hr=new Date().getHours();const hi=hr<12?"Good morning":hr<17?"Hey":"Good evening";
+ return `<div class="hero"><div class="bigemoji">🦠</div><div class="mini" style="color:#fff">${hi}, Tiff 👋🏾</div><div class="big">Ready to outsmart some pathogens?</div><p style="margin:8px 0 14px;max-width:560px">Short games. Big brain. Pick anything — or let the wheel decide.</p>
+ <div class="row"><button class="btn" onclick="openWheel()">🎡 Spin the Wheel</button><button class="btn cyan" onclick="startGame('sprint')">⚡ 60-sec Formula Sprint</button><button class="btn lime" onclick="go('intel')">📡 Today's Intel</button></div></div>
+ <div class="grid">
+ <div class="card"><h3>🎯 Daily Quests</h3>${q.map(([k,n,t])=>{const v=Math.min(n,S.day[k]||0);return `<div class="quest ${v>=n?"done":""}"><div class="ck">${v>=n?"✓":""}</div><div class="qt" style="flex:1">${t}</div><div class="mini">${v}/${n}</div></div>`}).join("")}<p class="mini" style="margin-top:8px">New quests every day. Keep your 🔥 streak alive.</p></div>
+ <div class="card"><h3>🧠 Quick Fact</h3><div id="qfact" style="font-size:18px;min-height:96px"></div><button class="btn sm violet" onclick="newFact()">Another one</button></div>
+ <div class="card"><h3>🏅 Badges</h3><div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px">${Object.entries(BADGES).map(([k,b])=>`<div class="badge ${S.badges.includes(k)?"":"off"}" title="${b[1]}: ${b[2]}" style="padding:4px"><div class="e" style="font-size:24px">${b[0]}</div></div>`).join("")}</div><p class="mini" style="margin-top:8px">${S.badges.length}/${Object.keys(BADGES).length} unlocked · hover for details</p></div>
+ </div>
+ <div class="sec disp">Jump in</div>
+ <div class="grid">${GAMES.slice(0,6).map(gameCard).join("")}</div>
+ <div style="text-align:center;margin-top:18px"><button class="btn pink" onclick="go('games')">See all ${GAMES.length} games →</button></div>
+ <div class="sec disp">Settings</div>
+ <div class="card"><div class="row"><label>My city <input id="setCity" value="${esc(S.settings.city)}" style="width:170px"></label>
+ <label>My state <select id="setState">${STATES.map(s=>`<option ${s===S.settings.state?"selected":""}>${s}</option>`).join("")}</select></label>
+ <button class="btn sm lime" onclick="saveSettings()">Save</button><button class="btn sm ghost" onclick="resetAll()">Reset progress</button></div><p class="mini" style="margin-top:6px">Your progress saves on this device/browser.</p></div>`},
+intel(){const st=S.settings.state,c=S.settings.city;
+ return `<h1 class="h1">📡 Intel Room</h1><p class="sub">What's happening in ${esc(c)}, ${esc(st)}, the U.S. and the world — live from CDC & WHO.</p>
+ <div class="sec disp">Respiratory radar</div>
+ <div class="grid" id="resp" style="grid-template-columns:repeat(auto-fill,minmax(330px,1fr))"><div class="card">Loading live CDC data… 🛰️</div></div>
+ <p class="mini" style="margin-top:6px">% of all emergency department visits that were for each virus (CDC National Syndromic Surveillance Program), latest week. Arrows = CDC's trend call.</p>
+ <div class="sec disp">🌍 World outbreaks</div><div class="card"><div id="who">Loading WHO Disease Outbreak News…</div></div>
+ <div class="sec disp">🇺🇸 U.S. outbreaks & CDC news</div><div class="grid"><div class="card"><h3>CDC outbreak list</h3><div id="cdcout">Loading…</div></div><div class="card"><h3>CDC newsroom</h3><div id="cdcnews">Loading…</div></div></div>
+ <div class="sec disp">🔗 Daily check-in links</div>
+ <div class="grid">${[["🏙️ "+esc(c),cityLinks()],["🗺️ "+esc(st),stateLinks()],["🇺🇸 National",INTEL_LINKS.us],["🌍 Global",INTEL_LINKS.world]].map(([h,l])=>`<div class="card"><h3>${h}</h3>${l.map(([n,u])=>`<a class="newsitem" target="_blank" rel="noopener" href="${u}">${n} ↗</a>`).join("")}</div>`).join("")}</div>
+ <div class="sec disp">🔎 News by topic</div>
+ <div class="row">${DISEASES.map(d=>`<a class="btn sm" style="background:${d.color};text-decoration:none" target="_blank" rel="noopener" href="https://news.google.com/search?q=${encodeURIComponent(d.name.replace(/ \(.*\)/,"")+" "+(d.id==="ebola"||d.id==="marburg"?"outbreak":c))}">${d.emoji} ${d.name}</a>`).join("")}</div>
+ <div class="sec disp">📝 My watch notes</div>
+ <div class="card"><textarea id="notes" rows="5" style="width:100%" placeholder="Jot what you noticed today (e.g., 'Flu ED visits rising in PA — mention at Thursday meeting')">${esc(S.notes||"")}</textarea><div class="row" style="margin-top:8px"><button class="btn sm lime" onclick="S.notes=$('#notes').value;save();toast('Saved ✍🏾');addXP(5)">Save notes</button></div></div>`},
+diseases(){return `<h1 class="h1">🦠 Disease Files</h1><p class="sub">Your 9 focus topics. Tap a file to open it (+10 XP the first time).</p>
+ <div class="grid">${DISEASES.map(d=>`<div class="card click" onclick="openDisease('${d.id}')" style="border-color:#000;background:linear-gradient(160deg,${d.color}33,var(--card) 60%)"><div class="dz">${d.emoji}</div><h3 style="color:${d.color}">${d.name}</h3><span class="tag" style="background:${d.color}">${d.type}</span><p class="mini" style="margin-top:6px">${d.oneLiner}</p>${S.read.includes(d.id)?'<div class="pill status-Done" style="position:absolute;right:12px;top:12px">✓ read</div>':""}</div>`).join("")}</div>
+ <div class="sec disp">Test yourself</div><div class="grid">${GAMES.filter(g=>["whoami","transmission","memory"].includes(g.id)).map(gameCard).join("")}</div>`},
+games(){const cats=[["Epidemiology & Biostats",["sprint","outbreak","herd","design","bias","memory"]],["Program Planning & Community",["logic","smart","sem","services","prevention"]],["Diseases & Vaccines",["whoami","transmission","mythfact","parent"]]];
+ return `<h1 class="h1">🎮 Game Arcade</h1><p class="sub">Every game is short (2–5 min). Bored? Hit the orange button and switch.</p><div class="row" style="margin-bottom:6px"><button class="btn" onclick="openWheel()">🎡 Can't choose? Spin!</button></div>
+ ${cats.map(([n,ids])=>`<div class="sec disp">${n}</div><div class="grid">${ids.map(id=>gameCard(GAMES.find(g=>g.id===id))).join("")}</div>`).join("")}`},
+formulas(){const cats=[...new Set(FORMULAS.map(f=>f.cat))];
+ return `<h1 class="h1">🧮 Formula Lab</h1><p class="sub">Every formula you need, with a live calculator. Change the numbers and watch the answer update.</p>
+ <div class="row" style="margin-bottom:10px"><button class="btn cyan" onclick="startGame('sprint')">⚡ Practice: Formula Sprint</button><div class="seg" id="fcat"><button class="on" data-c="all">All</button>${cats.map(c=>`<button data-c="${c}">${c}</button>`).join("")}</div></div>
+ <div class="grid" id="flist">${FORMULAS.map(f=>`<div class="card calc" data-cat="${f.cat}"><span class="tag">${f.cat}</span><h3 style="font-size:17px">${f.name}</h3><div class="formula">${f.f}</div>${f.ins.map((i,k)=>`<label>${i[0]}<input type="number" step="any" value="${i[1]}" data-f="${f.id}" data-k="${k}"></label>`).join("")}<div class="result" id="r_${f.id}"></div><p class="mini" style="margin-top:6px">💡 ${f.tip}</p></div>`).join("")}</div>
+ <div class="sec disp">2×2 table cheat sheet</div>
+ <div class="card"><table class="t"><tr><th></th><th>Disease +</th><th>Disease −</th></tr><tr><th>Exposed +</th><td>a</td><td>b</td></tr><tr><th>Exposed −</th><td>c</td><td>d</td></tr></table>
+ <p style="margin-top:10px">RR = [a/(a+b)] ÷ [c/(c+d)] · OR = ad/bc · For screening, swap rows to Test +/−: Sens = a/(a+c) · Spec = d/(b+d) · PPV = a/(a+b) · NPV = d/(c+d)</p></div>`},
+vaccines(){return `<h1 class="h1">💉 Vaccine Talk</h1><p class="sub">Stay sharp for parent conversations. Practice, then go be the trusted messenger.</p>
+ <div class="grid">${GAMES.filter(g=>["parent","mythfact"].includes(g.id)).map(gameCard).join("")}
+ <div class="card"><h3>🧮 Herd immunity math</h3><p>Measles R0 ≈ 15 → 1 − 1/15 = <b>93%</b> need immunity. With a 97% effective vaccine, ~96% of kids need 2 doses of MMR.</p><button class="btn sm lime" style="margin-top:8px" onclick="startGame('herd')">Try the simulator</button></div></div>
+ <div class="sec disp">⚠️ Heads-up for 2025–2026</div>
+ <div class="card" style="border-color:var(--orange)"><p>Federal vaccine guidance changed a lot in 2025–2026 (ACIP membership, some CDC recommendations, and CDC web pages on autism). The American Academy of Pediatrics now publishes its own schedule, and many states and insurers follow it. <b>Before talking with parents, check both:</b></p><div class="row" style="margin-top:10px"><a class="btn sm cyan" target="_blank" rel="noopener" href="https://www.aap.org/en/patient-care/immunizations/">AAP Immunization Schedule ↗</a><a class="btn sm" target="_blank" rel="noopener" href="https://www.cdc.gov/vaccines/hcp/imz-schedules/index.html">CDC Schedules ↗</a><a class="btn sm lime" target="_blank" rel="noopener" href="https://www.healthychildren.org/English/safety-prevention/immunizations/Pages/default.aspx">HealthyChildren.org (for parents) ↗</a></div></div>
+ <div class="sec disp">🗓️ Childhood schedule at a glance</div>
+ <div class="card"><table class="t">${SCHEDULE.map(([a,v])=>`<tr><th style="width:130px">${a}</th><td style="text-align:left">${v}</td></tr>`).join("")}</table><p class="mini" style="margin-top:8px">Simplified overview based on the AAP-style routine schedule. Catch-up and high-risk recommendations differ — always confirm with the current official schedule.</p></div>
+ <div class="sec disp">🗣️ Conversation toolkit</div>
+ <div class="grid">${TALK_TOOLS.map(([t,d])=>`<div class="card"><h3 style="font-size:17px">${t}</h3><p>${d}</p></div>`).join("")}</div>
+ <div class="sec disp">🧯 Myth vs. fact cards</div>
+ <div class="grid">${DECKS.mythfact.cards.filter(c=>c[1]==="MYTH").map(c=>`<details class="card"><summary>❌ "${c[0]}"</summary><p style="margin-top:8px">✅ ${c[2]}</p></details>`).join("")}</div>`},
+career(){const by=k=>CAREER.filter(c=>c.kind===k);const counts=["Interested","Studying","Applied","Done"].map(s=>[s,Object.values(S.career).filter(v=>v===s).length]);
+ const sect=(t,k)=>`<div class="sec disp">${t}</div><div class="grid">${by(k).map(c=>{const st=S.career[c.id]||"None";return `<div class="card"><span class="pill status-${st}" style="float:right">${st==="None"?"Not started":st}</span><h3 style="font-size:17px;margin-right:90px">${c.name}</h3><div class="mini">${c.org}</div><p style="margin:8px 0">${c.info}</p><div class="row"><a class="btn sm cyan" target="_blank" rel="noopener" href="${c.url}">Visit ↗</a><select onchange="setCareer('${c.id}',this.value)">${["None","Interested","Studying","Applied","Done"].map(s=>`<option value="${s}" ${s===st?"selected":""}>${s==="None"?"Not started":s}</option>`).join("")}</select></div></div>`}).join("")}</div>`;
+ return `<h1 class="h1">🎓 Career Quest</h1><p class="sub">Certs, trainings and organizations to join. Track your status — each step earns XP.</p>
+ <div class="statgrid" style="grid-template-columns:repeat(4,1fr)">${counts.map(([s,n])=>`<div class="stat"><div class="n">${n}</div><div class="pill status-${s}">${s}</div></div>`).join("")}</div>
+ ${sect("📜 Certifications","cert")}${sect("🆓 Trainings (mostly free)","training")}${sect("🤝 Organizations to join","org")}
+ <p class="mini" style="margin-top:14px">Eligibility rules and fees change — always confirm on the official site before applying.</p>`}
+};
+
+function gameCard(g){const b=S.best[g.id];return `<div class="card click" onclick="startGame('${g.id}')" style="background:linear-gradient(160deg,${g.color}44,var(--card) 65%)"><div class="dz">${g.icon}</div><h3>${g.name}</h3><p class="mini">${g.desc}</p><div class="row" style="margin-top:8px"><span class="tag" style="background:${g.color}">${g.tag}</span>${b!=null?`<span class="tag" style="background:#fff">Best: ${b}</span>`:""}</div></div>`}
+
+const STATES=["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","District of Columbia","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"];
+function saveSettings(){S.settings.city=$("#setCity").value.trim()||"Philadelphia";S.settings.state=$("#setState").value;save();toast("Saved! Intel now tracks "+S.settings.city+", "+S.settings.state)}
+function resetAll(){if(confirm("Erase all XP, badges and progress?")){localStorage.removeItem(KEY);location.reload()}}
+function cityLinks(){const c=S.settings.city;return c.toLowerCase()==="philadelphia"?INTEL_LINKS.city:[[c+" health department",`https://www.google.com/search?q=${encodeURIComponent(c+" health department")}`],[c+" health news (Google News)",`https://news.google.com/search?q=${encodeURIComponent(c+" public health")}`]]}
+function stateLinks(){const s=S.settings.state;return s==="Pennsylvania"?INTEL_LINKS.state:[[s+" Department of Health",`https://www.google.com/search?q=${encodeURIComponent(s+" department of health")}`],[s+" health news (Google News)",`https://news.google.com/search?q=${encodeURIComponent(s+" department of health")}`]]}
+function setCareer(id,v){const was=S.career[id];S.career[id]=v;save();if(v!=="None"&&!was){addXP(20);badge("career")}if(v==="Done"&&was!=="Done"){addXP(100);confetti(200);toast("Huge! Achievement unlocked 🎓")}route()}
+
+/* home fact */
+function newFact(){const d=pick(DISEASES);const el=$("#qfact");if(el)el.innerHTML=`<span style="color:${d.color};font-weight:800">${d.emoji} ${d.name}:</span> ${pick(d.facts)}`}
+AFTER.home=()=>newFact();
+AFTER.formulas=()=>{const upd=f=>{const v=$$(`input[data-f="${f.id}"]`).map(i=>parseFloat(i.value));const r=$("#r_"+f.id);if(v.some(isNaN)){r.textContent="—";return}const x=f.calc(v);r.textContent=isFinite(x)?(+x.toFixed(2)).toLocaleString()+" "+f.unit:"—"};FORMULAS.forEach(upd);
+ $("#flist").addEventListener("input",e=>{const f=FORMULAS.find(x=>x.id===e.target.dataset.f);if(f)upd(f)});
+ $("#fcat").addEventListener("click",e=>{const c=e.target.dataset.c;if(!c)return;$$("#fcat button").forEach(b=>b.classList.toggle("on",b===e.target));$$("#flist .card").forEach(k=>k.style.display=c==="all"||k.dataset.cat===c?"":"none")})};
+
+/* disease modal */
+function openDisease(id){const d=DISEASES.find(x=>x.id===id);if(!S.read.includes(id)){S.read.push(id);save();addXP(10);bump("read");if(S.read.length>=DISEASES.length)badge("reader")}
+ modal(`<div class="gamehead"><div class="dz">${d.emoji}</div><div><h2 style="color:${d.color}">${d.name}</h2><span class="tag" style="background:${d.color}">${d.type}</span></div></div>
+ <p style="font-size:19px;font-weight:600">${d.oneLiner}</p>
+ <div class="sec disp" style="font-size:18px">Need-to-know</div><ul class="list">${d.facts.map(f=>`<li>${f}</li>`).join("")}</ul>
+ <div class="grid" style="margin-top:14px"><div class="card"><h3 style="font-size:16px">⚠️ Risk factors / triggers</h3><ul class="list">${d.triggers.map(f=>`<li>${f}</li>`).join("")}</ul></div>
+ <div class="card"><h3 style="font-size:16px">🛡️ Prevention & interventions</h3><ul class="list">${d.prevent.map(f=>`<li>${f}</li>`).join("")}</ul></div></div>
+ <div class="sec disp" style="font-size:18px">By the numbers</div>${d.numbers.map(([a,b])=>`<div class="fb" style="margin-top:6px"><b>${a}:</b> ${b}</div>`).join("")}
+ <div class="fb" style="border-color:var(--yellow)">👀 <b>What to watch:</b> ${d.watch}</div>
+ <div class="row" style="margin-top:14px">${d.links.map(([n,u])=>`<a class="btn sm cyan" target="_blank" rel="noopener" href="${u}">${n} ↗</a>`).join("")}<a class="btn sm" target="_blank" rel="noopener" href="https://news.google.com/search?q=${encodeURIComponent(d.name)}">Latest news ↗</a><button class="btn sm pink" onclick="startGame('whoami')">Play Who Am I?</button></div>`)}
+
+/* modal */
+let onClose=null;
+function modal(html,cb){$("#modal").classList.add("on");$("#mbox").innerHTML=`<button class="close" onclick="closeModal()">✕</button>`+html;onClose=cb||null;$("#modal").scrollTop=0}
+function closeModal(){$("#modal").classList.remove("on");$("#mbox").innerHTML="";if(onClose){const c=onClose;onClose=null;c()}stopAll();if(["home","games","diseases",""].includes(location.hash.slice(1)))route()}
+
+/* wheel */
+function openWheel(){const items=shuffle(GAMES).slice(0,8);const cols=["#ff2e88","#00e5ff","#b6ff00","#ffe600","#ff8a00","#7c4dff","#00ffa3","#ff3b3b"];
+ modal(`<h2 style="text-align:center">🎡 Spin the Wheel</h2><p class="sub" style="text-align:center">Let fate pick your next game.</p><div class="wheelwrap"><div class="pin">🔻</div><canvas id="wheel" width="340" height="340"></canvas></div><div style="text-align:center"><button class="btn pink" id="spinb">SPIN!</button><div id="wres" class="score" style="margin-top:12px;min-height:30px"></div></div>`);
+ const c=$("#wheel"),x=c.getContext("2d"),n=items.length,a=2*Math.PI/n;
+ items.forEach((g,i)=>{x.beginPath();x.moveTo(170,170);x.arc(170,170,165,i*a-Math.PI/2,(i+1)*a-Math.PI/2);x.fillStyle=cols[i];x.fill();x.lineWidth=4;x.strokeStyle="#000";x.stroke();x.save();x.translate(170,170);x.rotate(i*a+a/2-Math.PI/2);x.textAlign="right";x.fillStyle="#000";x.font="bold 15px Lexend, sans-serif";x.fillText(g.icon+" "+g.short,155,5);x.restore()});
+ let spun=false;$("#spinb").onclick=()=>{if(spun)return;spun=true;const k=rnd(0,n-1);const deg=360*6+(360-(k*360/n+180/n));c.style.transform=`rotate(${deg}deg)`;
+  let t=0;const tk=setInterval(()=>{sfx("tick");if(++t>25)clearInterval(tk)},140);
+  setTimeout(()=>{$("#wres").textContent=items[k].icon+" "+items[k].name+"!";sfx("level");confetti(60);setTimeout(()=>startGame(items[k].id),900)},4100)}}
+
+/* ===================== INTEL LOADERS ===================== */
+const ARROW={Increasing:["▲ Increasing","#ff3b3b"],Decreasing:["▼ Decreasing","#b6ff00"],"No Change":["● No change","#ffe600"]};
+async function loadResp(){const box=$("#resp");if(!box)return;const geos=[S.settings.state,"United States"];
+ try{const rows=await Promise.all(geos.map(g=>fetch(`https://data.cdc.gov/resource/rdmq-nq56.json?$limit=8&county=All&geography=${encodeURIComponent(g)}&$order=week_end%20DESC`).then(r=>r.json())));
+  box.innerHTML=rows.map((rs,i)=>{const r=rs[0];if(!r)return `<div class="card">No data for ${geos[i]}</div>`;const wk=new Date(r.week_end).toLocaleDateString(undefined,{month:"short",day:"numeric"});
+   const cell=(lab,k,tk,col)=>{const tr=ARROW[r[tk]]||[r[tk]||"",'#c9b8ff'];const series=rs.map(x=>+x[k]).reverse();const mx=Math.max(...series,.01);
+    return `<div class="stat"><div class="mini">${lab}</div><div class="n" style="color:${col}">${(+r[k]).toFixed(2)}%</div><div class="trend" style="color:${tr[1]}">${tr[0]}</div><svg viewBox="0 0 80 24" width="100%" height="24"><polyline fill="none" stroke="${col}" stroke-width="3" points="${series.map((v,j)=>`${j*80/(series.length-1)},${22-v/mx*20}`).join(" ")}"/></svg></div>`};
+   return `<div class="card" style="grid-column:span 1"><h3>${i===0?"🗺️ ":"🇺🇸 "}${geos[i]}</h3><div class="mini" style="margin-bottom:8px">Week ending ${wk}</div><div class="statgrid">${cell("COVID","percent_visits_covid","ed_trends_covid","#00ffa3")}${cell("Flu","percent_visits_influenza","ed_trends_influenza","#7c4dff")}${cell("RSV","percent_visits_rsv","ed_trends_rsv","#b6ff00")}</div></div>`}).join("")+
+   `<div class="card"><h3>🏙️ ${esc(S.settings.city)}</h3><p>County-level ED trends are often suppressed. For city data, check your local dashboard:</p>${cityLinks().slice(0,2).map(([n,u])=>`<a class="newsitem" target="_blank" rel="noopener" href="${u}">${n} ↗</a>`).join("")}</div>`;
+ }catch(e){box.innerHTML=`<div class="card">Couldn't reach CDC right now (offline?). <a target="_blank" href="https://www.cdc.gov/respiratory-viruses/data/index.html">Open CDC respiratory data ↗</a></div>`}}
+const HOT=/ebola|marburg|influenza|avian|h5n1|covid|sars-cov|rsv|syncytial|measles|polio|mpox/i;
+async function loadWHO(){const el=$("#who");if(!el)return;try{const j=await fetch("https://www.who.int/api/news/diseaseoutbreaknews?$top=12&$orderby=PublicationDateAndTime%20desc&$select=Title,PublicationDate,UrlName").then(r=>r.json());
+ el.innerHTML=j.value.map(v=>`<a class="newsitem ${HOT.test(v.Title)?"hot":""}" target="_blank" rel="noopener" href="https://www.who.int/emergencies/disease-outbreak-news/item/${v.UrlName}"><div class="d">${new Date(v.PublicationDate).toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"})}${HOT.test(v.Title)?" · 🔥 on your watchlist":""}</div><b>${esc(v.Title)}</b></a>`).join("")}catch(e){el.innerHTML=`Couldn't load. <a target="_blank" href="https://www.who.int/emergencies/disease-outbreak-news">Open WHO DON ↗</a>`}}
+async function loadRSS(id,url,fallback){const el=$("#"+id);if(!el)return;try{const j=await fetch("https://api.rss2json.com/v1/api.json?rss_url="+encodeURIComponent(url)).then(r=>r.json());if(j.status!=="ok")throw 0;
+ const tmp=document.createElement("div");el.innerHTML=j.items.sort((a,b)=>b.pubDate.localeCompare(a.pubDate)).slice(0,8).map(i=>{tmp.innerHTML=i.title;const t=tmp.textContent;tmp.innerHTML=t;return `<a class="newsitem ${HOT.test(t)?"hot":""}" target="_blank" rel="noopener" href="${esc(i.link)}"><div class="d">${i.pubDate.slice(0,10)}</div><b>${esc(tmp.textContent)}</b></a>`}).join("")}catch(e){el.innerHTML=`Couldn't load. <a target="_blank" href="${fallback}">Open on CDC ↗</a>`}}
+AFTER.intel=()=>{loadResp();loadWHO();loadRSS("cdcout","https://tools.cdc.gov/api/v2/resources/media/285676.rss","https://www.cdc.gov/outbreaks/index.html");loadRSS("cdcnews","https://tools.cdc.gov/api/v2/resources/media/132608.rss","https://www.cdc.gov/media/index.html");addXPOnce("intel",5)};
+function addXPOnce(k,n){touchDay();if(S.day["once_"+k])return;S.day["once_"+k]=1;save();addXP(n)}
+
+/* boot */
+window.addEventListener("hashchange",route);
+window.addEventListener("DOMContentLoaded",()=>{touchDay();bgfx();renderHeader();route();$("#modal").addEventListener("click",e=>{if(e.target.id==="modal")closeModal()})});
+
+/* ===================== GAMES ===================== */
+let GT=[],GRAF=null;
+function stopAll(){GT.forEach(clearInterval);GT.forEach(clearTimeout);GT=[];if(GRAF)cancelAnimationFrame(GRAF);GRAF=null}
+const SHORT={design:"Study Design",bias:"Bias",logic:"Logic Model",smart:"SMART",sem:"Soc-Eco",services:"10 Services",prevention:"Prevention",transmission:"Spread",mythfact:"Myth/Fact"};
+const deckGame=(id,tag,desc)=>({id,name:DECKS[id].title,short:SHORT[id],icon:DECKS[id].icon,color:DECKS[id].color,tag,desc,run:()=>sorter(id)});
+const GAMES=[
+ {id:"sprint",name:"Formula Sprint",short:"Sprint",icon:"⚡",color:"#00e5ff",tag:"Biostats",desc:"60 seconds. Rapid-fire rates, ratios, RR, OR, sensitivity, herd immunity. How many can you crush?",run:()=>sprint()},
+ {id:"outbreak",name:"Outbreak Detective",short:"Outbreak",icon:"🕵🏾‍♀️",color:"#ff2e88",tag:"Field Epi",desc:"People got sick after a big event. Read the epi curve, calculate attack rates, find the bad food.",run:()=>outbreak()},
+ {id:"herd",name:"Herd Immunity Simulator",short:"Herd",icon:"🐑",color:"#b6ff00",tag:"Vaccines",desc:"Set vaccine coverage, release a virus, and watch it spread (or fizzle) live.",run:()=>herd()},
+ {id:"parent",name:"Parent Talk Simulator",short:"Parent",icon:"🗣️",color:"#ffb800",tag:"Vaccines",desc:"Real parent concerns. Pick the response that builds trust. Watch the trust meter.",run:()=>parentSim()},
+ {id:"whoami",name:"Who Am I? Disease Edition",short:"Who Am I",icon:"❓",color:"#7c4dff",tag:"Diseases",desc:"Guess the disease from clues. Fewer clues = more points.",run:()=>whoami()},
+ {id:"memory",name:"Epi Memory Match",short:"Memory",icon:"🧠",color:"#00ffa3",tag:"Vocab",desc:"Flip cards and match epi & biostat terms to their meanings.",run:()=>memory()},
+ deckGame("design","Epi Methods","Read the study. Name the design. RCT? Cohort? Case-control?"),
+ deckGame("bias","Epi Methods","Recall bias, confounding, healthy worker effect… spot the flaw."),
+ deckGame("logic","Program Planning","Sort pieces of a real program into the logic model."),
+ deckGame("smart","Program Planning","Is this objective SMART or a hot mess?"),
+ deckGame("sem","Community Interventions","Individual? Policy? Place each intervention on the Social Ecological Model."),
+ deckGame("services","Public Health Core","Match each Essential Public Health Service to its core function."),
+ deckGame("prevention","Community Interventions","Primordial, primary, secondary or tertiary prevention?"),
+ deckGame("transmission","Diseases","Airborne, body fluids, vectors or food? How does it spread?"),
+ deckGame("mythfact","Vaccines","Myth or fact? Train your misinformation radar.")
+];
+function startGame(id){stopAll();const g=GAMES.find(x=>x.id===id);if(!g)return;bump("games");badge("first");g.run()}
+function endScreen(id,score,xp,msg){stopAll();const g=GAMES.find(x=>x.id===id);const prev=S.best[id];const isBest=prev==null||score>prev;if(isBest){S.best[id]=score;save()}
+ addXP(xp);confetti(isBest?200:90);sfx("level");
+ modal(`<div style="text-align:center"><div style="font-size:80px;animation:wob 2s infinite">${g.icon}</div><h2>${g.name}</h2><div class="score" style="font-size:54px;color:var(--yellow)">${score}</div>${isBest?'<div class="combo">🏆 NEW PERSONAL BEST!</div>':`<div class="mini">Best: ${prev}</div>`}<p style="margin:12px 0;font-size:18px">${msg||""}</p><div class="score" style="color:var(--lime)">+${xp} XP</div>
+ <div class="row" style="justify-content:center;margin-top:16px"><button class="btn pink" onclick="startGame('${id}')">🔁 Again</button><button class="btn cyan" onclick="startGame(pick(GAMES.filter(x=>x.id!=='${id}')).id)">🎲 Surprise me</button><button class="btn ghost" onclick="closeModal()">Done</button></div></div>`)}
+function headHTML(g,extra=""){return `<div class="gamehead"><span style="font-size:36px">${g.icon}</span><h2 style="font-size:22px">${g.name}</h2>${extra}</div>`}
+function comboFx(c){if(c===5)badge("combo5");if(c===10)badge("combo10")}
+
+/* ---------- generic sorter ---------- */
+function sorter(id){const D=DECKS[id],g=GAMES.find(x=>x.id===id);const cards=shuffle(D.cards).slice(0,10);let i=0,score=0,combo=0,right=0,t,left;
+ const show=()=>{if(i>=cards.length)return endScreen(id,score,right*6+(right===cards.length?30:0),`${right}/${cards.length} correct.${right===cards.length?" FLAWLESS! 💅🏾":""}`);
+  const [q,a,why]=cards[i];left=20;
+  modal(headHTML(g,`<span class="chip">${i+1}/${cards.length}</span><span class="chip score">⭐ ${score}</span>${combo>1?`<span class="combo">🔥x${combo}</span>`:""}`)+
+  `<div class="row" style="margin-bottom:10px"><div class="timer"><div id="tbar" style="width:100%"></div></div><span class="chip" id="tleft">20s</span></div>
+  <div class="qcard">${q}</div><div class="opts">${shuffle(D.options).map(o=>`<button class="opt" data-o="${esc(o)}">${o}</button>`).join("")}</div><div id="fbx"></div>`);
+  stopAll();t=setInterval(()=>{left--;const b=$("#tbar");if(b){b.style.width=(left/20*100)+"%";$("#tleft").textContent=left+"s"}if(left<=0){clearInterval(t);answer(null)}},1000);GT.push(t);
+  $$(".opt").forEach(b=>b.onclick=()=>answer(b.dataset.o,b));
+  function answer(o,btn){stopAll();$$(".opt").forEach(b=>{b.disabled=true;if(b.dataset.o===a)b.classList.add("right")});const ok=o===a;
+   if(ok){combo++;right++;const pts=100+left*5+(combo>1?combo*10:0);score+=pts;sfx("right");bump("correct");if(id==="mythfact")bump("myth");comboFx(combo);if((S.stats.myth||0)>=10)badge("myth")}else{combo=0;sfx("wrong");if(btn)btn.classList.add("wrong")}
+   $("#fbx").innerHTML=`<div class="fb" style="border-color:${ok?"var(--lime)":"var(--red)"}"><b>${ok?"✅ Yes!":o?"❌ Nope — it's "+a:"⏰ Time! It's "+a}</b><br>${why}</div><div style="text-align:right;margin-top:10px"><button class="btn pink" id="nx">Next →</button></div>`;
+   $("#nx").onclick=()=>{i++;show()}}};
+ show()}
+
+/* ---------- formula sprint ---------- */
+const r1=x=>Math.round(x*10)/10,r2=x=>Math.round(x*100)/100;
+const GEN=[
+ ()=>{const n=rnd(60,200),c=rnd(10,n-20);return{q:`${c} of ${n} people at a cookout got sick. Attack rate?`,a:r1(c/n*100),u:"%",w:[r1(n/c),r1(c/(n-c)*100),r1((n-c)/n*100)]}},
+ ()=>{const c=rnd(20,120),d=rnd(2,c-5);return{q:`${c} confirmed Ebola cases, ${d} deaths. Case fatality rate?`,a:r1(d/c*100),u:"%",w:[r1(d/(c+d)*100),r1((c-d)/c*100),r1(c/d)]}},
+ ()=>{const p=rnd(2,20)*1000,c=rnd(50,900);return{q:`${c} people currently have asthma in a town of ${p.toLocaleString()}. Prevalence per 1,000?`,a:r1(c/p*1000),u:"per 1,000",w:[r1(c/p*100),r1(c/p*10000),r1(p/c)]}},
+ ()=>{const py=rnd(10,60)*100,c=rnd(5,40);return{q:`${c} new cases over ${py.toLocaleString()} person-years. Incidence rate per 1,000 PY?`,a:r1(c/py*1000),u:"per 1,000 PY",w:[r1(c/py*100),r1(c/py*10000),r1(py/c)]}},
+ ()=>{const a=rnd(20,60),b=rnd(20,80),c=rnd(5,25),d=rnd(60,120);return{q:`Cohort: exposed ${a} sick / ${b} well; unexposed ${c} sick / ${d} well. Risk ratio?`,a:r2((a/(a+b))/(c/(c+d))),u:"",w:[r2(a*d/(b*c)),r2((c/(c+d))/(a/(a+b))),r2(a/c)]}},
+ ()=>{const a=rnd(20,60),b=rnd(10,40),c=rnd(10,40),d=rnd(30,80);return{q:`Case-control 2×2: a=${a}, b=${b}, c=${c}, d=${d}. Odds ratio?`,a:r2(a*d/(b*c)),u:"",w:[r2(b*c/(a*d)),r2((a/(a+b))/(c/(c+d))),r2(a*b/(c*d))]}},
+ ()=>{const tp=rnd(60,95),fn=rnd(3,30);return{q:`A screening test finds ${tp} true positives and misses ${fn} people with the disease (false negatives). Sensitivity?`,a:r1(tp/(tp+fn)*100),u:"%",w:[r1(fn/(tp+fn)*100),r1(tp/fn*10),r1(100-tp)]}},
+ ()=>{const tn=rnd(700,950),fp=rnd(10,120);return{q:`${tn} true negatives and ${fp} false positives. Specificity?`,a:r1(tn/(tn+fp)*100),u:"%",w:[r1(fp/(tn+fp)*100),r1(fp/tn*100),r1(tn/1000*100)]}},
+ ()=>{const tp=rnd(40,95),fp=rnd(20,120);return{q:`${tp} true positives, ${fp} false positives. PPV?`,a:r1(tp/(tp+fp)*100),u:"%",w:[r1(fp/(tp+fp)*100),r1(tp/fp*10),r1(tp/(tp+fp+50)*100)]}},
+ ()=>{const R=pick([1.5,2,2.5,3,4,5,6,8,10,12,15,18]);return{q:`R0 = ${R}. What % of the population needs immunity for herd immunity?`,a:r1((1-1/R)*100),u:"%",w:[r1(1/R*100),r1(Math.min(99,R*5)),r1((1-1/(R+2))*100)]}},
+ ()=>{const u=rnd(10,40),v=r1(rnd(5,u*5)/10);return{q:`Attack rate unvaccinated ${u}%, vaccinated ${v}%. Vaccine efficacy?`,a:r1((u-v)/u*100),u:"%",w:[r1(v/u*100),r1(u-v),r1((u-v)/v*10)]}},
+ ()=>{const b=rnd(8,30)*1000,d=rnd(40,250);return{q:`${d} infant deaths and ${b.toLocaleString()} live births. Infant mortality rate per 1,000?`,a:r1(d/b*1000),u:"per 1,000",w:[r1(d/b*100),r1(d/b*100000),r1(b/d/10)]}},
+ ()=>{const b=rnd(8,30)*1000,p=Math.round(b*rnd(80,140)/1000);return{q:`${p.toLocaleString()} preterm births out of ${b.toLocaleString()} live births. Preterm birth rate?`,a:r1(p/b*100),u:"%",w:[r1(p/b*1000),r1(p/(b-p)*100+2),r1(b/p)]}},
+ ()=>{const c=rnd(15,40),t=c-rnd(3,12);return{q:`Risk with placebo ${c}%, with treatment ${t}%. Number needed to treat?`,a:r1(100/(c-t)),u:"people",w:[r1(c-t),r1(100/c),r1(c/t)]}},
+ ()=>{const re=rnd(20,50),ru=rnd(2,15);return{q:`Risk in exposed ${re}%, unexposed ${ru}%. Attributable risk % (among exposed)?`,a:r1((re-ru)/re*100),u:"%",w:[r1(re-ru),r1(ru/re*100),r1((re-ru)/ru*100)]}},
+ ()=>{const m=rnd(60,120),sd=rnd(5,20),x=m+sd*pick([-2,-1.5,-1,1,1.5,2,2.5]);return{q:`Mean ${m}, SD ${sd}. Z-score for a value of ${x}?`,a:r2((x-m)/sd),u:"",w:[r2((m-x)/sd),r2((x-m)/(sd*sd)),r2(x/sd)]}},
+ ()=>{const e=rnd(40,120),o=e+rnd(-30,60);return{q:`Observed ${o} deaths; ${e} were expected. SMR?`,a:r2(o/e),u:"",w:[r2(e/o),o-e,r2(o/e*100)]}},
+ ()=>{const ct=rnd(12,40),c=rnd(2,ct-4);return{q:`Household study: ${c} of ${ct} susceptible contacts got sick. Secondary attack rate?`,a:r1(c/ct*100),u:"%",w:[r1(c/(ct+1)*50),r1((ct-c)/ct*100),r1(ct/c)]}},
+ ()=>{const i=rnd(2,15),d=rnd(2,12);return{q:`Incidence ${i} per 1,000/yr, average duration ${d} years. Prevalence per 1,000 ≈ ?`,a:i*d,u:"per 1,000",w:[r1(i/d),i+d,i*d*10]}},
+ ()=>{const b=rnd(10,30)*1000,m=rnd(2,12);return{q:`${m} maternal deaths, ${b.toLocaleString()} live births. Maternal mortality ratio per 100,000?`,a:r1(m/b*100000),u:"per 100,000",w:[r1(m/b*1000),r1(m/b*10000),r1(m/b*1000000)]}}
+];
+function sprint(){const g=GAMES[0];let score=0,combo=0,left=60;
+ modal(headHTML(g,`<span class="chip score" id="sc">⭐ 0</span><span class="combo" id="cb"></span>`)+`<div class="row" style="margin-bottom:10px"><div class="timer"><div id="tbar" style="width:100%"></div></div><span class="chip" id="tleft">60s</span></div><div id="qa"></div>`);
+ const t=setInterval(()=>{left--;$("#tbar").style.width=(left/60*100)+"%";$("#tleft").textContent=left+"s";if(left<=10)sfx("tick");if(left<=0){const fin=score;endScreen("sprint",fin,fin*6+5,fin>=10?"Formula ACE energy. 🧮🔥":fin>=5?"Solid! Run it back to beat it.":"Warm-up round. Peek at the Formula Lab then try again!");if(fin>=10)badge("formula")}},1000);GT.push(t);
+ const next=()=>{const p=pick(GEN)();const fmt=v=>(+v).toLocaleString(undefined,{maximumFractionDigits:2})+(p.u?" "+p.u:"");let opts=[p.a];p.w.forEach(w=>{if(isFinite(w)&&w>0&&!opts.includes(w))opts.push(w)});while(opts.length<4){const z=r2(p.a*pick([.5,.8,1.25,1.5,2,3]));if(!opts.includes(z))opts.push(z)}opts=shuffle(opts.slice(0,4));
+  $("#qa").innerHTML=`<div class="qcard">${p.q}</div><div class="opts">${opts.map(o=>`<button class="opt" data-v="${o}">${fmt(o)}</button>`).join("")}</div>`;
+  $$("#qa .opt").forEach(b=>b.onclick=()=>{const ok=+b.dataset.v===p.a;$$("#qa .opt").forEach(x=>{x.disabled=true;if(+x.dataset.v===p.a)x.classList.add("right")});
+   if(ok){score++;combo++;sfx("right");bump("correct");bump("formula");comboFx(combo)}else{combo=0;b.classList.add("wrong");sfx("wrong")}
+   $("#sc").textContent="⭐ "+score;$("#cb").textContent=combo>1?"🔥x"+combo:"";const tt=setTimeout(next,ok?450:1300);GT.push(tt)})};
+ next()}
+
+/* ---------- outbreak detective ---------- */
+const PATHS=[
+ {n:"Staphylococcus aureus (toxin)",inc:[1,6],unit:"h",sx:"sudden, intense vomiting and cramps, little or no fever",foods:["Potato salad","Ham sandwiches","Cream puffs"]},
+ {n:"Salmonella",inc:[12,60],unit:"h",sx:"diarrhea, fever and stomach cramps",foods:["Chicken","Deviled eggs","Cantaloupe"]},
+ {n:"Norovirus",inc:[12,48],unit:"h",sx:"vomiting and watery diarrhea that pass in 1–3 days",foods:["Salad bar greens","Raw oysters","Fruit tray"]},
+ {n:"Clostridium perfringens",inc:[6,24],unit:"h",sx:"diarrhea and cramps, usually no vomiting or fever",foods:["Gravy","Roast beef","Chili"]},
+ {n:"E. coli O157:H7",inc:[48,168],unit:"h",sx:"severe cramps and bloody diarrhea",foods:["Hamburgers","Romaine salad","Unpasteurized juice"]}
+];
+const EVENTS=["church anniversary picnic","family reunion cookout","baby shower","block party","school fundraiser dinner","graduation party"];
+const SIDES=["Mac & cheese","Collard greens","Cornbread","Fruit punch","Potato chips","Sweet tea","Rolls","Green beans","Cake","Coleslaw"];
+function outbreak(){const g=GAMES[1];const P=pick(PATHS),ev=pick(EVENTS),culprit=pick(P.foods);const foods=shuffle([culprit,...shuffle(SIDES).slice(0,5)]);const N=rnd(70,130);
+ const people=[...Array(N)].map(()=>{const ate={};foods.forEach(f=>ate[f]=Math.random()<(f===culprit?.6:rnd(35,80)/100));const ill=Math.random()<(ate[culprit]?.72:.06);const on=ill?(P.inc[0]+Math.pow(Math.random(),1.4)*(P.inc[1]-P.inc[0])*.9+Math.random()*(P.inc[1]-P.inc[0])*.1):null;return{ate,ill,on}});
+ const ill=people.filter(p=>p.ill);const tab=foods.map(f=>{const e=people.filter(p=>p.ate[f]),u=people.filter(p=>!p.ate[f]);const ei=e.filter(p=>p.ill).length,ui=u.filter(p=>p.ill).length;return{f,ei,en:e.length,ui,un:u.length,are:ei/e.length*100,aru:u.length?ui/u.length*100:0}});
+ tab.forEach(t=>t.rr=t.aru?t.are/t.aru:99);const ct=tab.find(t=>t.f===culprit);
+ const bins=12,span=P.unit==="h"&&P.inc[1]>100?P.inc[1]:P.inc[1];const w=span/bins;const counts=Array(bins).fill(0);ill.forEach(p=>counts[Math.min(bins-1,Math.floor(p.on/w))]++);const mx=Math.max(...counts);
+ const onsets=ill.map(p=>p.on).sort((a,b)=>a-b);const med=onsets[Math.floor(onsets.length/2)];
+ let score=0,step=0;const choices=shuffle(PATHS).slice(0,4);if(!choices.includes(P))choices[0]=P;
+ const steps=[
+  ()=>`<p>📍 After a <b>${ev}</b> with <b>${N}</b> guests, <b>${ill.length}</b> people got sick with <b>${P.sx}</b>. Here's the epi curve (hours after the meal):</p>
+   <div class="epibars">${counts.map((c,i)=>`<div title="${Math.round(i*w)}–${Math.round((i+1)*w)}h: ${c}" style="height:${c/mx*100}%;animation-delay:${i*60}ms"></div>`).join("")}</div><div class="row mini" style="justify-content:space-between"><span>0h</span><span>${Math.round(span/2)}h</span><span>${Math.round(span)}h</span></div>
+   <p style="margin-top:10px">Median incubation ≈ <b>${Math.round(med)} hours</b>. One sharp peak = a point-source outbreak. <b>Which pathogen fits best?</b></p>
+   <div class="opts">${shuffle(choices).map(c=>`<button class="opt" data-a="${c===P?1:0}">${c.n}<br><span class="mini" style="color:#000">${c.inc[0]}–${c.inc[1]}h</span></button>`).join("")}</div>`,
+  ()=>`<p>🍽️ You interviewed everyone. Here's the food table. <b>Calculate the attack rate for people who ate the ${tab[0].f}</b> (round to whole %).</p>${foodTable(tab,false)}<div class="row" style="margin-top:10px"><input id="arin" type="number" placeholder="%" style="width:110px"><button class="btn cyan" id="arbtn">Check</button></div><p class="mini">Attack rate = ill ÷ total who ate × 100</p>`,
+  ()=>`<p>Now all attack rates are filled in. <b>Which food is the most likely culprit?</b> (Look for: high attack rate among eaters, low among non-eaters, and most sick people ate it.)</p>${foodTable(tab,true)}<div class="opts" style="margin-top:10px">${foods.map(f=>`<button class="opt" data-a="${f===culprit?1:0}">${f}</button>`).join("")}</div>`,
+  ()=>{const rr=r1(ct.rr);const o=shuffle([rr,r1(ct.are-ct.aru),r1(ct.aru/ct.are||.1),r1(ct.are/10)]);return `<p>🎯 ${culprit} it is. <b>What is the risk ratio</b> for eating ${culprit}?</p><p class="formula">RR = ${r1(ct.are)}% ÷ ${r1(ct.aru)}%</p><div class="opts">${[...new Set(o)].map(v=>`<button class="opt" data-a="${v===rr?1:0}">${v}</button>`).join("")}</div>`},
+  ()=>`<p>📋 Final step. <b>What should the health department do next?</b></p><div class="opts">${shuffle([["Collect leftover food & stool samples for the lab, interview food handlers, and inspect how the food was stored",1],["Close the church permanently",0],[`Post on social media that everyone has ${P.n}`,0],["Wait to see if more people get sick",0]]).map(([t,a])=>`<button class="opt" data-a="${a}">${t}</button>`).join("")}</div>`
+ ];
+ const render=()=>{modal(headHTML(g,`<span class="chip">Step ${step+1}/5</span><span class="chip score">⭐ ${score}</span>`)+`<div id="ob">${steps[step]()}</div><div id="fbx"></div>`);
+  if(step===1){$("#arbtn").onclick=()=>{const v=parseFloat($("#arin").value);const corr=Math.round(tab[0].are);const ok=Math.abs(v-corr)<=1;fin(ok,`${tab[0].ei} ÷ ${tab[0].en} × 100 = <b>${r1(tab[0].are)}%</b>`)}}
+  else $$("#ob .opt").forEach(b=>b.onclick=()=>{$$("#ob .opt").forEach(x=>{x.disabled=true;if(x.dataset.a==="1")x.classList.add("right")});const ok=b.dataset.a==="1";if(!ok)b.classList.add("wrong");
+   const why=[`${P.n}: incubation ${P.inc[0]}–${P.inc[1]} hours, ${P.sx}.`,"",`${culprit}: attack rate ${r1(ct.are)}% among eaters vs ${r1(ct.aru)}% among non-eaters. ${ct.ei} of ${ill.length} sick people ate it.`,`${r1(ct.are)} ÷ ${r1(ct.aru)} = ${r1(ct.rr)}. People who ate ${culprit} were ${r1(ct.rr)}× as likely to get sick.`,"Lab confirmation + an environmental investigation finds HOW it happened (temperature abuse, cross-contamination, a sick food handler) so you can prevent the next one."][step];fin(ok,why)})};
+ const fin=(ok,why)=>{if(ok){score+=100;sfx("right");bump("correct")}else sfx("wrong");$("#fbx").innerHTML=`<div class="fb" style="border-color:${ok?"var(--lime)":"var(--red)"}"><b>${ok?"✅ Nailed it!":"❌ Not quite."}</b> ${why}</div><div style="text-align:right;margin-top:10px"><button class="btn pink" id="nx">${step<4?"Next →":"Close the case 🔒"}</button></div>`;
+  $("#nx").onclick=()=>{step++;if(step<5)render();else{if(score>=400)badge("detective");endScreen("outbreak",score,Math.round(score/10)+10,`Case closed: <b>${P.n}</b> in the <b>${culprit}</b>. ${score>=400?"Disease Detective status! 🕵🏾‍♀️":""}`)}}};
+ render()}
+function foodTable(tab,full){return `<div style="overflow-x:auto"><table class="t"><tr><th rowspan="2">Food</th><th colspan="3">Ate it</th><th colspan="3">Didn't eat</th>${full?'<th rowspan="2">RR</th>':""}</tr><tr><th>Ill</th><th>Total</th><th>AR%</th><th>Ill</th><th>Total</th><th>AR%</th></tr>
+ ${tab.map((t,i)=>`<tr><th>${t.f}</th><td>${t.ei}</td><td>${t.en}</td><td>${full?r1(t.are):"?"}</td><td>${t.ui}</td><td>${t.un}</td><td>${full?r1(t.aru):"?"}</td>${full?`<td>${r1(t.rr)}</td>`:""}</tr>`).join("")}</table></div>`}
+
+/* ---------- herd immunity sim ---------- */
+const DZ=[["Measles",15,97],["Pertussis",14,85],["Chickenpox",10,90],["COVID-19 (variant era)",8,60],["Mumps",5,88],["Ebola",2,95],["Seasonal flu",1.4,50]];
+function herd(){const g=GAMES[2];
+ modal(headHTML(g)+`<div class="row" style="margin-bottom:10px"><label>Disease <select id="hd">${DZ.map((d,i)=>`<option value="${i}">${d[0]} (R0 ${d[1]})</option>`).join("")}</select></label>
+ <label style="flex:1;min-width:200px">Vaccinated: <b id="hcv">80</b>%<input id="hc" type="range" min="0" max="100" value="80" style="width:100%;padding:0"></label></div>
+ <div class="fb" id="hinfo" style="margin:0 0 10px"></div>
+ <div class="simwrap"><canvas id="hcan" width="720" height="380"></canvas></div>
+ <div class="row" style="margin-top:10px;justify-content:space-between"><div class="legend"><span><i style="background:#fff"></i>Susceptible</span><span><i style="background:#ff3b3b"></i>Infected</span><span><i style="background:#7c4dff"></i>Recovered</span><span><i style="background:#00e5ff"></i>Vaccinated</span></div><div class="chip" id="hstat">Day 0</div></div>
+ <div class="row" style="margin-top:10px"><button class="btn pink" id="hgo">🦠 Release the virus</button><button class="btn ghost" id="hreset">↺ Reset</button></div><div id="hres"></div>`);
+ const c=$("#hcan"),x=c.getContext("2d"),W=720,H=380,N=320;let pop=[],running=false,day=0,links=[],hist=[];
+ const info=()=>{const d=DZ[$("#hd").value],hit=(1-1/d[1])*100,vc=Math.min(100,hit/(d[2]/100));$("#hcv").textContent=$("#hc").value;$("#hinfo").innerHTML=`<b>${d[0]}</b>: R0 = ${d[1]}, vaccine effectiveness ≈ ${d[2]}%. Herd immunity threshold = 1 − 1/${d[1]} = <b>${r1(hit)}%</b>. Coverage needed with this vaccine ≈ <b>${vc>=100?"100%+ (vaccine alone can't do it — need other measures too)":r1(vc)+"%"}</b>.`};
+ const reset=()=>{stopAll();running=false;day=0;hist=[];links=[];const cv=$("#hc").value/100;pop=[...Array(N)].map(()=>({x:rnd(10,W-10),y:rnd(10,H-60),vx:(Math.random()-.5)*.6,vy:(Math.random()-.5)*.6,s:Math.random()<cv?"V":"S",d:0}));$("#hres").innerHTML="";$("#hstat").textContent="Day 0";info();loop()};
+ const draw=()=>{x.fillStyle="#0b021c";x.fillRect(0,0,W,H);
+  links=links.filter(l=>--l.t>0);links.forEach(l=>{x.strokeStyle=`rgba(255,59,59,${l.t/20})`;x.lineWidth=2;x.beginPath();x.moveTo(l.a.x,l.a.y);x.lineTo(l.b.x,l.b.y);x.stroke()});
+  pop.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<6||p.x>W-6)p.vx*=-1;if(p.y<6||p.y>H-56)p.vy*=-1;x.beginPath();x.arc(p.x,p.y,p.s==="I"?6:4.5,0,7);x.fillStyle={S:"#fff",I:"#ff3b3b",R:"#7c4dff",V:"#00e5ff"}[p.s];x.fill();if(p.s==="I"){x.strokeStyle="#ff3b3b55";x.lineWidth=6;x.stroke()}});
+  const mx=Math.max(10,...hist);x.fillStyle="#ffffff10";x.fillRect(0,H-50,W,50);hist.forEach((v,i)=>{x.fillStyle="#ff3b3b";const bw=Math.max(2,W/Math.max(60,hist.length));x.fillRect(i*bw,H-v/mx*46,bw-1,v/mx*46)});x.fillStyle="#c9b8ff";x.font="12px Lexend";x.fillText("infected each day",6,H-36)};
+ const loop=()=>{draw();GRAF=requestAnimationFrame(loop)};
+ const tick=()=>{const d=DZ[$("#hd").value],R=d[1],ve=d[2]/100,D=5;day++;let newI=0;const inf=pop.filter(p=>p.s==="I");
+  inf.forEach(p=>{let k=0,lam=R/D,L=Math.exp(-lam),q=1;do{k++;q*=Math.random()}while(q>L);k--;for(let j=0;j<k;j++){const t=pick(pop);if(t===p)continue;if(t.s==="S"||(t.s==="V"&&Math.random()>ve)){t.s="I";t.d=D+1;newI++;links.push({a:p,b:t,t:20})}}});
+  inf.forEach(p=>{if(--p.d<=0)p.s="R"});hist.push(pop.filter(p=>p.s==="I").length);
+  const ever=pop.filter(p=>p.s==="I"||p.s==="R").length;$("#hstat").textContent=`Day ${day} · ${ever} ever infected`;
+  if(!pop.some(p=>p.s==="I")){clearInterval(ti);running=false;const unv=pop.filter(p=>p.s!=="V").length;const pct=r1(ever/N*100);const stopped=ever<=12;
+   if(stopped)badge("herd");$("#hres").innerHTML=`<div class="fb" style="border-color:${stopped?"var(--lime)":"var(--red)"}"><b>${stopped?"🐑 HERD IMMUNITY WINS!":"💥 Outbreak!"}</b> ${ever} of ${N} people (${pct}%) got infected over ${day} days. ${stopped?"The virus couldn't find enough susceptible people.":"Try raising coverage above the threshold and run it again."}</div>`;
+   if(!S.day.once_herd){addXPOnce("herd",25)}sfx(stopped?"level":"wrong");if(stopped)confetti(150)}};
+ let ti;$("#hgo").onclick=()=>{if(running)return;if(day>0)reset();running=true;const seeds=shuffle(pop.filter(p=>p.s==="S")).slice(0,3);if(seeds.length<3)seeds.push(...shuffle(pop).slice(0,3-seeds.length));seeds.forEach(p=>{p.s="I";p.d=6});ti=setInterval(tick,420);GT.push(ti)};
+ $("#hreset").onclick=reset;$("#hc").oninput=()=>{if(!running)reset()};$("#hd").onchange=()=>{if(!running)reset()};reset()}
+
+/* ---------- memory ---------- */
+function memory(){const g=GAMES[5];const set=shuffle(VOCAB).slice(0,6);const cards=shuffle(set.flatMap((v,i)=>[{p:i,t:v[0],k:"t"},{p:i,t:v[1],k:"d"}]));let open=[],moves=0,found=0,lock=false;const t0=Date.now();
+ modal(headHTML(g,`<span class="chip" id="mv">Moves: 0</span>`)+`<p class="sub">Match each term to its meaning.</p><div class="memgrid">${cards.map((c,i)=>`<div class="flip" data-i="${i}"><div class="in"><div class="f">${["🦠","🧬","💉","🧫","🔬","📊"][i%6]}</div><div class="b" style="${c.k==="t"?"font-family:Bungee;font-size:15px;font-weight:400":""}">${c.t}</div></div></div>`).join("")}</div>`);
+ $$(".flip").forEach(el=>el.onclick=()=>{const i=+el.dataset.i;if(lock||el.classList.contains("on"))return;el.classList.add("on");sfx("click");open.push([i,el]);
+  if(open.length===2){moves++;$("#mv").textContent="Moves: "+moves;const[a,b]=open;open=[];if(cards[a[0]].p===cards[b[0]].p&&cards[a[0]].k!==cards[b[0]].k){found++;sfx("right");bump("correct");a[1].classList.add("gone");b[1].classList.add("gone");if(found===6){badge("memory");const sc=Math.max(10,200-moves*10-Math.round((Date.now()-t0)/2000));const tt=setTimeout(()=>endScreen("memory",sc,30+Math.round(sc/10),`Cleared in ${moves} moves.`),700);GT.push(tt)}}
+   else{lock=true;sfx("wrong");const tt=setTimeout(()=>{a[1].classList.remove("on");b[1].classList.remove("on");lock=false},900);GT.push(tt)}}})}
+
+/* ---------- who am i ---------- */
+function whoami(){const g=GAMES[4];const rounds=shuffle(WHOAMI).slice(0,6);let r=0,score=0,right=0;
+ const show=()=>{if(r>=rounds.length){if(right>=5)badge("whoami");return endScreen("whoami",score,Math.round(score/5)+10,`${right}/${rounds.length} diseases identified.`)}
+  const R=rounds[r];let n=1;const opts=shuffle([R.a,...shuffle(WHOAMI.filter(w=>w.a!==R.a)).slice(0,3).map(w=>w.a)]);
+  const paint=()=>{modal(headHTML(g,`<span class="chip">${r+1}/${rounds.length}</span><span class="chip score">⭐ ${score}</span>`)+`<div class="qcard">${R.clues.slice(0,n).map((c,i)=>`<div style="margin:6px 0;animation:pop .4s">🔎 <b>Clue ${i+1}:</b> ${c}</div>`).join("")}</div>
+   <div class="row" style="margin-bottom:10px"><button class="btn sm violet" id="more" ${n>=R.clues.length?"disabled":""}>➕ Another clue (−10)</button><span class="chip">Worth: ${60-n*10} pts</span></div><div class="opts">${opts.map(o=>`<button class="opt" data-o="${o}">${o}</button>`).join("")}</div><div id="fbx"></div>`);
+   $("#more").onclick=()=>{n++;paint()};
+   $$(".opt").forEach(b=>b.onclick=()=>{$$(".opt").forEach(x=>{x.disabled=true;if(x.dataset.o===R.a)x.classList.add("right")});$("#more").disabled=true;const ok=b.dataset.o===R.a;if(ok){score+=60-n*10;right++;sfx("right");bump("correct")}else{b.classList.add("wrong");sfx("wrong")}
+    $("#fbx").innerHTML=`<div class="fb"><b>${ok?"✅ Yes! I'm "+R.a:"❌ I'm "+R.a}</b><br><span class="mini">All clues: ${R.clues.join(" · ")}</span></div><div style="text-align:right;margin-top:10px"><button class="btn pink" id="nx">Next →</button></div>`;$("#nx").onclick=()=>{r++;show()}})};paint()};
+ show()}
+
+/* ---------- parent sim ---------- */
+function parentSim(){const g=GAMES[3];const sc=shuffle(PARENT_SIMS).slice(0,5);let i=0,trust=50;
+ const show=()=>{if(i>=sc.length){if(trust>=130)badge("talker");return endScreen("parent",trust,Math.round(trust/4),trust>=130?"Parents leave your table feeling heard AND informed. 🗣️💜":trust>=90?"Good instincts! Lead with empathy, follow with facts.":"Practice the CASE method in the toolkit, then try again.")}
+  const s=sc[i];modal(headHTML(g,`<span class="chip">${i+1}/${sc.length}</span>`)+`<div class="mini">Trust meter</div><div class="meter"><div style="width:${Math.min(100,trust/150*100)}%"></div></div>
+  <div class="qcard" style="margin-top:14px">👩🏽‍🍼 <i>"${s.parent}"</i></div><div class="mini" style="margin-bottom:6px">How do you respond?</div>
+  <div style="display:grid;gap:10px">${shuffle(s.opts).map(o=>`<button class="opt" style="text-align:left;font-weight:600" data-d="${o[1]}" data-w="${esc(o[2])}">${o[0]}</button>`).join("")}</div><div id="fbx"></div>`);
+  $$(".opt").forEach(b=>b.onclick=()=>{const d=+b.dataset.d;trust=Math.max(0,trust+d);$$(".opt").forEach(x=>{x.disabled=true;if(+x.dataset.d===20)x.classList.add("right")});if(d<20)b.classList.add("wrong");sfx(d===20?"right":"wrong");if(d===20){bump("correct");bump("myth")}
+   $(".meter div").style.width=Math.min(100,trust/150*100)+"%";$("#fbx").innerHTML=`<div class="fb" style="border-color:${d===20?"var(--lime)":"var(--orange)"}"><b>${d>0?"+":""}${d} trust.</b> ${b.dataset.w}</div><div style="text-align:right;margin-top:10px"><button class="btn pink" id="nx">Next parent →</button></div>`;$("#nx").onclick=()=>{i++;show()}})};
+ show()}
+</script></body></html>
