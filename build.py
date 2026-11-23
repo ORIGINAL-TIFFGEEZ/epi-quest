@@ -5,3 +5,4 @@ h=h.replace('/*CSS*/',(d/'style.css').read_text()).replace('/*JS*/','\n'.join((d
 (d.parent/'dist'/'EpiQuest.html').write_text(h)
 print('built',len(h))
 (d.parent/'dist'/'index.html').write_text(h)
+(d.parent/'docs').mkdir(exist_ok=True); (d.parent/'docs'/'index.html').write_text(h)
